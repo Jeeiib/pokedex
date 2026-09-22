@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
   },
   cardTitleLabel: {
-    ...typography.subtitle2,
+    ...typography.cardName,
   },
   options: {
     borderRadius: 8,
@@ -153,6 +153,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   optionLabel: {
-    ...typography.body3,
+    ...typography.body,
   },
 });

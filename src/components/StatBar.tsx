@@ -21,12 +21,12 @@ const MAX_BASE_STAT = 255;
 
 // Mesures du fichier Figma : ligne de 16, libellé sur 27, valeur sur 19,
 // barre de 4 de haut. La piste est la couleur du type à 20 pour cent.
-const ROW_HEIGHT = 16;
+const ROW_HEIGHT = 24;
 // Largeurs calées sur les libellés français, plus longs que les trois lettres
 // de la maquette anglaise : « Déf. Spé. » contre « SDEF ».
-const LABEL_WIDTH = 64;
-const VALUE_WIDTH = 30;
-const BAR_HEIGHT = 4;
+const LABEL_WIDTH = 92;
+const VALUE_WIDTH = 42;
+const BAR_HEIGHT = 6;
 const TRACK_OPACITY = 0.2;
 
 type StatBarProps = {
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     height: ROW_HEIGHT,
   },
   label: {
-    ...typography.subtitle3,
+    ...typography.statLabel,
     width: LABEL_WIDTH,
     textAlign: "right",
     paddingRight: 4,
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     height: ROW_HEIGHT,
   },
   value: {
-    ...typography.body3,
+    ...typography.statValue,
     width: VALUE_WIDTH,
     paddingLeft: 4,
   },

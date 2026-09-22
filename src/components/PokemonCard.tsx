@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useState } from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { ReduceMotion, useAnimatedStyle, withTiming } from "react-native-reanimated";
 
 import { MOTION } from "@/constants/motion";
@@ -10,12 +10,10 @@ import { useA11yLanguage } from "@/i18n";
 import { getArtworkUrl } from "@/utils/artworkUrl";
 import { formatPokemonId } from "@/utils/formatPokemonId";
 
-// Mesures du fichier Figma : carte de 104x108, artwork de 72 posé en absolu
-// qui recouvre le socle du nom, lequel réserve 24 de padding haut pour lui.
-const CARD_HEIGHT = 108;
-const ARTWORK_SIZE = 72;
-const ARTWORK_TOP = 16;
-const NAME_PADDING_TOP = 24;
+// Le nom est ce qu'on cherche dans une grille, le numéro ne sert qu'à
+// confirmer : il passe sous le nom et s'efface.
+const CARD_HEIGHT = 148;
+const ARTWORK_SIZE = 88;
 
 type PokemonCardProps = {
   id: number;
@@ -50,17 +48,22 @@ export default function PokemonCard({ id, name }: PokemonCardProps) {
         accessibilityLabel={`${name}, ${formatPokemonId(id)}`}
         accessibilityLanguage={a11yLanguage}
       >
+        {/* L'ombre vit sur la vue animée, au-dessus du rognage : sur iOS,
+            `overflow: hidden` rogne l'ombre du même élément et la fait
+            disparaître. */}
         <Animated.View
           style={[styles.surface, elevation.low, pressStyle, { backgroundColor: theme.surface }]}
         >
           <View style={styles.card}>
-            <View style={styles.numberRow}>
-              <Text style={[styles.number, { color: theme.textSecondary }]}>
-                {formatPokemonId(id)}
-              </Text>
-            </View>
+            <Image
+              source={{ uri: getArtworkUrl(id) }}
+              style={styles.artwork}
+              resizeMode="contain"
+              accessible={false}
+              importantForAccessibility="no"
+            />
 
-            <View style={[styles.nameBlock, { backgroundColor: theme.background }]}>
+            <View style={styles.identity}>
               <Text
                 style={[styles.name, { color: theme.textPrimary }]}
                 numberOfLines={1}
@@ -69,15 +72,14 @@ export default function PokemonCard({ id, name }: PokemonCardProps) {
               >
                 {name}
               </Text>
+              <Text
+                style={[styles.number, { color: theme.textSecondary }]}
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+              >
+                {formatPokemonId(id)}
+              </Text>
             </View>
-
-            <Image
-              source={{ uri: getArtworkUrl(id) }}
-              style={styles.artwork}
-              resizeMode="contain"
-              accessible={false}
-              importantForAccessibility="no"
-            />
           </View>
         </Animated.View>
       </Pressable>
@@ -90,42 +92,32 @@ const styles = StyleSheet.create({
     flex: 1,
     height: CARD_HEIGHT,
   },
-  // L'ombre vit sur la vue animée, au-dessus du rognage : sur iOS,
-  // `overflow: hidden` rogne l'ombre du même élément et la fait disparaître.
   surface: {
     flex: 1,
-    borderRadius: 8,
+    borderRadius: 12,
   },
   card: {
     flex: 1,
-    borderRadius: 8,
-    justifyContent: "space-between",
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.xs,
     overflow: "hidden",
   },
-  numberRow: {
-    alignItems: "flex-end",
-    paddingTop: spacing.xs,
-    paddingHorizontal: spacing.sm,
+  artwork: {
+    width: ARTWORK_SIZE,
+    height: ARTWORK_SIZE,
   },
-  number: {
-    ...typography.caption,
-  },
-  nameBlock: {
-    borderRadius: 7,
-    paddingTop: NAME_PADDING_TOP,
-    paddingBottom: spacing.xs,
-    paddingHorizontal: spacing.sm,
+  identity: {
+    alignItems: "center",
   },
   name: {
-    ...typography.body3,
+    ...typography.cardName,
     textAlign: "center",
     textTransform: "capitalize",
   },
-  artwork: {
-    position: "absolute",
-    alignSelf: "center",
-    top: ARTWORK_TOP,
-    width: ARTWORK_SIZE,
-    height: ARTWORK_SIZE,
+  number: {
+    ...typography.cardNumber,
   },
 });

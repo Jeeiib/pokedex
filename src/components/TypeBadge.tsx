@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
   },
   label: {
-    ...typography.subtitle3,
+    ...typography.chip,
     textTransform: "capitalize",
   },
 });

@@ -1,3 +1,5 @@
+import type { TextStyle } from "react-native";
+
 // Palette claire : valeurs du Figma.
 export const lightTheme = {
   background: "#EFEFEF",
@@ -34,40 +36,37 @@ export const darkTheme: Theme = {
   scrim: "rgba(0, 0, 0, 0.4)",
 };
 
-export const fonts = {
-  regular: "Poppins_400Regular",
-  bold: "Poppins_700Bold",
-};
+// Police du système : SF Pro sur iOS, Roboto sur Android. Dynamic Type y
+// fonctionne nativement et les accents français y sont dessinés pour être lus,
+// ce que la géométrique de la maquette rendait ambigu à petite taille.
+const WEIGHT = {
+  regular: "400",
+  semibold: "600",
+  bold: "700",
+} as const;
 
-// Relevé complet des styles de texte du Figma : `body2` n'a pas de lecteur
-// actuellement, la table reste néanmoins le miroir exact de la maquette.
+// Un Pokédex est un instrument : ses chiffres s'alignent en colonne.
+const TABULAR = { fontVariant: ["tabular-nums"] } satisfies TextStyle;
+
+// Échelle d'iOS, à la taille système par défaut. Le texte suit ensuite le
+// réglage du téléphone.
 export const typography = {
-  headline: { fontFamily: fonts.bold, fontSize: 24, lineHeight: 32 },
-  subtitle1: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 16 },
-  subtitle2: { fontFamily: fonts.bold, fontSize: 12, lineHeight: 16 },
-  subtitle3: { fontFamily: fonts.bold, fontSize: 10, lineHeight: 16 },
-  body1: { fontFamily: fonts.regular, fontSize: 14, lineHeight: 16 },
-  body2: { fontFamily: fonts.regular, fontSize: 12, lineHeight: 16 },
-  body3: { fontFamily: fonts.regular, fontSize: 10, lineHeight: 16 },
-  caption: { fontFamily: fonts.regular, fontSize: 8, lineHeight: 12 },
-} as const;
-
-export const elevation = {
-  low: {
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  high: {
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 6,
-  },
-} as const;
+  appTitle: { fontSize: 28, lineHeight: 34, fontWeight: WEIGHT.bold },
+  pokemonName: { fontSize: 34, lineHeight: 41, fontWeight: WEIGHT.bold },
+  sectionTitle: { fontSize: 20, lineHeight: 25, fontWeight: WEIGHT.bold },
+  body: { fontSize: 17, lineHeight: 22, fontWeight: WEIGHT.regular },
+  bodyStrong: { fontSize: 17, lineHeight: 22, fontWeight: WEIGHT.semibold },
+  cardName: { fontSize: 15, lineHeight: 20, fontWeight: WEIGHT.semibold },
+  statLabel: { fontSize: 15, lineHeight: 20, fontWeight: WEIGHT.semibold },
+  statValue: { fontSize: 15, lineHeight: 20, fontWeight: WEIGHT.regular, ...TABULAR },
+  measureValue: { fontSize: 17, lineHeight: 22, fontWeight: WEIGHT.regular, ...TABULAR },
+  chip: { fontSize: 13, lineHeight: 18, fontWeight: WEIGHT.semibold },
+  caption: { fontSize: 13, lineHeight: 18, fontWeight: WEIGHT.regular },
+  cardNumber: { fontSize: 11, lineHeight: 13, fontWeight: WEIGHT.regular, ...TABULAR },
+  // Le numéro en creux derrière l'artwork : il porte l'identité de l'espèce à
+  // la place d'une décoration.
+  watermark: { fontSize: 160, lineHeight: 168, fontWeight: WEIGHT.bold, ...TABULAR },
+} satisfies Record<string, TextStyle>;
 
 // Tailles d'icônes. La maquette descendait à 16 dans les contrôles, trop peu
 // pour être visé au doigt une fois la cible portée à 44.
@@ -97,6 +96,23 @@ export const touchArea = {
   minHeight: TOUCH_TARGET,
   alignItems: "center",
   justifyContent: "center",
+} as const;
+
+export const elevation = {
+  low: {
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  high: {
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 6,
+  },
 } as const;
 
 export const spacing = {

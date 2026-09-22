@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     paddingRight: spacing.md,
   },
   input: {
-    ...typography.body1,
+    ...typography.body,
     flex: 1,
     // Le champ occupe toute la hauteur : viser la pilule suffit, sans avoir à
     // toucher précisément la ligne de texte.

@@ -8,7 +8,7 @@ import Animated, {
   type SharedValue,
 } from "react-native-reanimated";
 
-import { fonts, spacing } from "@/constants/theme";
+import { spacing, typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { useA11yLanguage } from "@/i18n";
 
@@ -18,8 +18,8 @@ import Pokeball from "./Pokeball";
 // pokéball de 24 à 16 du texte.
 const BALL_SIZE = 24;
 const COMPACT_AT = 80;
-const TITLE_SIZE = [24, 18];
-const TITLE_LINE = [32, 24];
+const TITLE_SIZE = [typography.appTitle.fontSize, 22];
+const TITLE_LINE = [typography.appTitle.lineHeight, 28];
 
 type PokedexHeaderProps = {
   scrollY: SharedValue<number>;
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     height: 32,
   },
   title: {
-    fontFamily: fonts.bold,
+    fontWeight: typography.appTitle.fontWeight,
     flex: 1,
   },
   actions: {

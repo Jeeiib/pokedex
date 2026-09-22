@@ -13,7 +13,7 @@ import PokemonCard from "@/components/PokemonCard";
 import SearchBar from "@/components/SearchBar";
 import SortMenu from "@/components/SortMenu";
 import ThemeToggle from "@/components/ThemeToggle";
-import TypeFilterModal from "@/components/TypeFilterModal";
+import TypeFilterBar from "@/components/TypeFilterBar";
 import { circleButton, iconSize, spacing, typography } from "@/constants/theme";
 import { useBoot } from "@/contexts/BootProvider";
 import { useFavorites } from "@/contexts/FavoritesProvider";
@@ -24,9 +24,10 @@ import { useA11yLanguage } from "@/i18n";
 import type { SortMode } from "@/types/pokemon";
 import { filterByIds, searchPokemons, sortPokemons } from "@/utils/pokemonList";
 
-// Mesures du fichier Figma : la surface blanche est posée à 4 des bords, son
-// contenu à 12 de plus, ce qui place les cartes à 16 du bord de l'écran.
-const SURFACE_INSET = 4;
+// La surface descend jusqu'au bas de l'écran : encadrée de rouge comme dans la
+// maquette, son liseré passait derrière les coins arrondis de l'iPhone et
+// paraissait accidentel.
+const SURFACE_RADIUS = 16;
 const LIST_PADDING = 12;
 const COLUMNS = 3;
 
@@ -94,7 +95,6 @@ export default function Index() {
         >
           <View style={styles.controls}>
             <SearchBar value={query} onChangeText={setQuery} />
-            <TypeFilterModal types={types} selected={selected} onSelect={select} />
             <Pressable
               style={[circleButton, { backgroundColor: theme.surface }]}
               onPress={() => setFavoritesOnly((current) => !current)}
@@ -105,13 +105,14 @@ export default function Index() {
             >
               <MaterialIcons
                 name={favoritesOnly ? "favorite" : "favorite-border"}
-                size={iconSize.sm}
+                size={iconSize.md}
                 color={theme.primaryText}
               />
             </Pressable>
             <SortMenu mode={sortMode} onChange={setSortMode} />
           </View>
         </PokedexHeader>
+        <TypeFilterBar types={types} selected={selected} onSelect={select} />
       </SafeAreaView>
 
       <View style={[styles.surface, { backgroundColor: theme.surface }]}>
@@ -153,12 +154,12 @@ const styles = StyleSheet.create({
   controls: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.md,
+    gap: spacing.sm,
   },
   surface: {
     flex: 1,
-    margin: SURFACE_INSET,
-    borderRadius: 8,
+    borderTopLeftRadius: SURFACE_RADIUS,
+    borderTopRightRadius: SURFACE_RADIUS,
     paddingHorizontal: LIST_PADDING,
   },
   list: {
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   empty: {
-    ...typography.body1,
+    ...typography.body,
     textAlign: "center",
     paddingTop: spacing.xl,
   },

@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   message: {
-    ...typography.body1,
+    ...typography.body,
     textAlign: "center",
   },
   button: {
@@ -57,6 +57,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   buttonLabel: {
-    ...typography.subtitle1,
+    ...typography.sectionTitle,
   },
 });

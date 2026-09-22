@@ -18,7 +18,6 @@ import CryButton from "@/components/CryButton";
 import ErrorMessage from "@/components/ErrorMessage";
 import FavoriteButton from "@/components/FavoriteButton";
 import Loader from "@/components/Loader";
-import Pokeball from "@/components/Pokeball";
 import StatBar from "@/components/StatBar";
 import TypeBadge from "@/components/TypeBadge";
 import { MOTION } from "@/constants/motion";
@@ -40,8 +39,7 @@ import { parsePokemonId } from "@/utils/parsePokemonId";
 const ARTWORK_SIZE = 200;
 const IMAGE_ROW_HEIGHT = 144;
 const CARD_PADDING_TOP = 56;
-const WATERMARK_SIZE = 208;
-const WATERMARK_OPACITY = 0.1;
+const WATERMARK_OPACITY = 0.14;
 
 export default function PokemonDetail() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
@@ -170,9 +168,17 @@ export default function PokemonDetail() {
           suit la couleur de texte que la table du type a validée. */}
       <StatusBar style={accent.foreground === "#FFFFFF" ? "light" : "dark"} />
 
-      <View style={styles.watermark} pointerEvents="none">
-        <Pokeball size={WATERMARK_SIZE} color={accent.foreground} opacity={WATERMARK_OPACITY} />
-      </View>
+      {/* Le filigrane porte le numéro de l'espèce, pas une décoration : dans
+          un Pokédex, le numéro est l'identité de la créature. */}
+      <Text
+        style={[styles.watermark, { color: accent.foreground }]}
+        pointerEvents="none"
+        accessible={false}
+        importantForAccessibility="no"
+        numberOfLines={1}
+      >
+        {formatPokemonId(pokemon.id).replace("#", "")}
+      </Text>
 
       <SafeAreaView edges={["top"]}>
         <View style={styles.title}>
@@ -206,9 +212,6 @@ export default function PokemonDetail() {
             name={species.name}
             color={accent.foreground}
           />
-          <Text style={[styles.number, { color: accent.foreground }]}>
-            {formatPokemonId(pokemon.id)}
-          </Text>
         </View>
       </SafeAreaView>
 
@@ -367,12 +370,14 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
   },
   fallbackBackLabel: {
-    ...typography.subtitle1,
+    ...typography.sectionTitle,
   },
   watermark: {
+    ...typography.watermark,
     position: "absolute",
-    top: 8,
-    right: 8,
+    top: 108,
+    right: -16,
+    opacity: WATERMARK_OPACITY,
   },
   title: {
     flexDirection: "row",
@@ -383,12 +388,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   name: {
-    ...typography.headline,
+    ...typography.pokemonName,
     flex: 1,
     textTransform: "capitalize",
-  },
-  number: {
-    ...typography.subtitle2,
   },
   imageRow: {
     height: IMAGE_ROW_HEIGHT,
@@ -430,7 +432,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   section: {
-    ...typography.subtitle1,
+    ...typography.sectionTitle,
     textAlign: "center",
   },
   attributes: {
@@ -449,7 +451,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   attributeValue: {
-    ...typography.body3,
+    ...typography.measureValue,
   },
   // Seuls les talents viennent de l'API en minuscules ; une unité SI ne prend
   // jamais de majuscule, d'où la distinction.
@@ -469,7 +471,6 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
   description: {
-    ...typography.body3,
-    textAlign: "justify",
+    ...typography.body,
   },
 });

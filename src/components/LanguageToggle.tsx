@@ -34,6 +34,6 @@ export default function LanguageToggle() {
 
 const styles = StyleSheet.create({
   label: {
-    ...typography.subtitle2,
+    ...typography.cardName,
   },
 });

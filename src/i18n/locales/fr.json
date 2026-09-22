@@ -14,7 +14,8 @@
     "filterTitle": "Filtrer par type",
     "filterAction": "Filtrer par type",
     "filterClear": "Tous les types",
-    "favoritesOnly": "Favoris uniquement"
+    "favoritesOnly": "Favoris uniquement",
+    "filterAll": "Tous"
   },
   "detail": {
     "back": "Retour à la liste",
