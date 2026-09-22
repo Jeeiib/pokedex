@@ -10,6 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+import { MOTION } from "@/constants/motion";
 import { typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { useA11yLanguage } from "@/i18n";
@@ -17,8 +18,6 @@ import { formatStatValue } from "@/utils/formatStat";
 
 // 255 est le maximum réel d'une statistique de base, atteint par Leuphorie.
 const MAX_BASE_STAT = 255;
-const DURATION = 700;
-const STAGGER = 80;
 
 // Mesures du fichier Figma : ligne de 16, libellé sur 27, valeur sur 19,
 // barre de 4 de haut. La piste est la couleur du type à 20 pour cent.
@@ -57,9 +56,9 @@ export default function StatBar({ label, value, color, index }: StatBarProps) {
       return;
     }
     width.value = withDelay(
-      index * STAGGER,
+      index * MOTION.stat.stagger,
       withTiming(target, {
-        duration: DURATION,
+        duration: MOTION.stat.duration,
         easing: Easing.out(Easing.cubic),
         reduceMotion: ReduceMotion.System,
       })
