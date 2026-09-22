@@ -1,8 +1,8 @@
 import { resolveCryUrl, toShowdownSlug } from "@/utils/cryUrl";
 
 describe("toShowdownSlug", () => {
-  // Les sept cas ont été mesurés : la source de repli renvoie 404 sur les
-  // slugs à tiret et 200 une fois collés.
+  // La source de repli renvoie 404 sur les slugs à tiret, et 200 une fois les
+  // tirets retirés.
   it("removes every hyphen from the api slug", () => {
     expect(toShowdownSlug("mr-mime")).toBe("mrmime");
     expect(toShowdownSlug("ho-oh")).toBe("hooh");

@@ -14,8 +14,8 @@ import { useA11yLanguage } from "@/i18n";
 
 import Pokeball from "./Pokeball";
 
-// Mesures du fichier Figma : contenu à 16 du bord, titre de 32 de haut,
-// pokéball de 24 à 16 du texte.
+// Mesures du fichier Figma : contenu à 16 du bord, pokéball de 24 à 16 du
+// texte. Le titre suit l'échelle d'iOS et se compacte au défilement.
 const BALL_SIZE = 24;
 const COMPACT_AT = 80;
 const TITLE_SIZE = [typography.appTitle.fontSize, 22];

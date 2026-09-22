@@ -6,7 +6,7 @@ type PokeballProps = SvgProps & {
 };
 
 // Pokéball du design system, exportée du fichier Figma. Le tracé est vectoriel
-// pour rester net du bandeau (24) au filigrane de la fiche (208).
+// pour rester net à toutes les tailles.
 export default function Pokeball({ size, color, ...props }: PokeballProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 23.757 24" fill="none" {...props}>

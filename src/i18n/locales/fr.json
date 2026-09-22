@@ -3,7 +3,7 @@
     "title": "Pokédex"
   },
   "list": {
-    "searchPlaceholder": "Rechercher un Pokémon",
+    "searchPlaceholder": "Rechercher",
     "empty": "Aucun Pokémon ne correspond",
     "results_one": "{{count}} Pokémon trouvé",
     "results_other": "{{count}} Pokémon trouvés",
@@ -13,9 +13,13 @@
     "sortAction": "Changer le tri",
     "filterTitle": "Filtrer par type",
     "filterAction": "Filtrer par type",
-    "filterClear": "Tous les types",
     "favoritesOnly": "Favoris uniquement",
-    "filterAll": "Tous"
+    "filterHelp": "Deux types au maximum. Un Pokémon doit porter les deux pour rester dans la liste.",
+    "filterClearAll": "Tout effacer",
+    "filterRemove": "Retirer le type {{type}}",
+    "filterCount_one": "{{count}} type actif",
+    "filterCount_other": "{{count}} types actifs",
+    "searchLabel": "Rechercher un Pokémon"
   },
   "detail": {
     "back": "Retour à la liste",
@@ -63,7 +67,8 @@
     "error": "Le chargement a échoué",
     "retry": "Réessayer",
     "notFound": "Ce Pokémon n'existe pas",
-    "close": "Fermer"
+    "close": "Fermer",
+    "done": "Terminé"
   },
   "theme": {
     "action": "Changer de thème",

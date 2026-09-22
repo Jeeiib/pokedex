@@ -1,6 +1,7 @@
 import type { PokemonSummary } from "@/types/pokemon";
 import {
   filterByIds,
+  intersectIds,
   mergeNames,
   normalizeSearch,
   searchPokemons,
@@ -113,5 +114,27 @@ describe("filterByIds", () => {
 
   it("returns an empty list when the filter matches nothing", () => {
     expect(filterByIds(index, [9999])).toEqual([]);
+  });
+});
+
+describe("intersectIds", () => {
+  it("returns an empty list when there is no list to combine", () => {
+    expect(intersectIds([])).toEqual([]);
+  });
+
+  it("returns the list as-is when there is only one", () => {
+    expect(intersectIds([[4, 5, 6]])).toEqual([4, 5, 6]);
+  });
+
+  it("keeps only the ids present in every list", () => {
+    expect(intersectIds([[4, 5, 6, 146], [6, 16, 17, 146]])).toEqual([6, 146]);
+  });
+
+  it("returns an empty list when the lists are disjoint", () => {
+    expect(intersectIds([[1, 2], [3, 4]])).toEqual([]);
+  });
+
+  it("deduplicates ids repeated within a list", () => {
+    expect(intersectIds([[1, 1, 2, 3], [1, 2]])).toEqual([1, 2]);
   });
 });

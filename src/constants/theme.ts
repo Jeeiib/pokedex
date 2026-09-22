@@ -9,18 +9,13 @@ export const lightTheme = {
   border: "#E0E0E0",
   primary: "#DC0A2D",
   onPrimary: "#FFFFFF",
-  // Le rouge d'identité ne donne que 3,24 en texte sur fond sombre, d'où un
-  // jeton distinct du rouge de fond.
   primaryText: "#DC0A2D",
-  // Voile des feuilles modales : assombrit le fond sans le masquer.
   scrim: "rgba(0, 0, 0, 0.4)",
 };
 
 export type Theme = typeof lightTheme;
 
-// Palette sombre : le rouge d'identité reste le rouge du Figma sur les fonds,
-// seul le rouge de texte est éclairci. Contrastes mesurés sur surface :
-// textPrimary 15,29 / textSecondary 7,01 / primaryText 5,18.
+
 export const darkTheme: Theme = {
   background: "#121212",
   surface: "#1E1E1E",
@@ -29,16 +24,11 @@ export const darkTheme: Theme = {
   border: "#4A4A4A",
   primary: "#DC0A2D",
   onPrimary: "#FFFFFF",
-  // Le rouge du Figma ne donne que 3,27 sur la surface sombre, d'où ce rouge
-  // clairci réservé au texte.
   primaryText: "#FF4D6A",
-  // Voile des feuilles modales : assombrit le fond sans le masquer.
   scrim: "rgba(0, 0, 0, 0.4)",
 };
 
-// Police du système : SF Pro sur iOS, Roboto sur Android. Dynamic Type y
-// fonctionne nativement et les accents français y sont dessinés pour être lus,
-// ce que la géométrique de la maquette rendait ambigu à petite taille.
+// Police du système : SF Pro sur iOS, Roboto sur Android.
 const WEIGHT = {
   regular: "400",
   semibold: "600",
@@ -63,13 +53,9 @@ export const typography = {
   chip: { fontSize: 13, lineHeight: 18, fontWeight: WEIGHT.semibold },
   caption: { fontSize: 13, lineHeight: 18, fontWeight: WEIGHT.regular },
   cardNumber: { fontSize: 11, lineHeight: 13, fontWeight: WEIGHT.regular, ...TABULAR },
-  // Le numéro en creux derrière l'artwork : il porte l'identité de l'espèce à
-  // la place d'une décoration.
   watermark: { fontSize: 160, lineHeight: 168, fontWeight: WEIGHT.bold, ...TABULAR },
 } satisfies Record<string, TextStyle>;
 
-// Tailles d'icônes. La maquette descendait à 16 dans les contrôles, trop peu
-// pour être visé au doigt une fois la cible portée à 44.
 export const iconSize = {
   sm: 20,
   md: 22,
@@ -77,8 +63,7 @@ export const iconSize = {
   xl: 32,
 } as const;
 
-// Taille minimale d'une cible tactile selon les guidelines Apple. La maquette
-// dessinait des pastilles de 32, mesurées trop petites à l'usage.
+// Taille minimale d'une cible tactile selon les guidelines Apple.
 export const TOUCH_TARGET = 44;
 
 // Pastille ronde des contrôles de la liste : filtre, favoris, tri.

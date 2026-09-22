@@ -5,6 +5,7 @@ import { AccessibilityInfo, Pressable, StyleSheet, Text, View } from "react-nati
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import ActiveTypeFilters from "@/components/ActiveTypeFilters";
 import ErrorMessage from "@/components/ErrorMessage";
 import LanguageToggle from "@/components/LanguageToggle";
 import Loader from "@/components/Loader";
@@ -13,7 +14,8 @@ import PokemonCard from "@/components/PokemonCard";
 import SearchBar from "@/components/SearchBar";
 import SortMenu from "@/components/SortMenu";
 import ThemeToggle from "@/components/ThemeToggle";
-import TypeFilterBar from "@/components/TypeFilterBar";
+import TypeFilterButton from "@/components/TypeFilterButton";
+import TypeFilterSheet from "@/components/TypeFilterSheet";
 import { circleButton, iconSize, spacing, typography } from "@/constants/theme";
 import { useBoot } from "@/contexts/BootProvider";
 import { useFavorites } from "@/contexts/FavoritesProvider";
@@ -24,9 +26,8 @@ import { useA11yLanguage } from "@/i18n";
 import type { SortMode } from "@/types/pokemon";
 import { filterByIds, searchPokemons, sortPokemons } from "@/utils/pokemonList";
 
-// La surface descend jusqu'au bas de l'écran : encadrée de rouge comme dans la
-// maquette, son liseré passait derrière les coins arrondis de l'iPhone et
-// paraissait accidentel.
+// La surface descend jusqu'au bas de l'écran : ses seuls arrondis sont en
+// haut, là où le rouge du bandeau s'arrête.
 const SURFACE_RADIUS = 16;
 const LIST_PADDING = 12;
 const COLUMNS = 3;
@@ -36,7 +37,7 @@ export default function Index() {
   const { theme } = useTheme();
   const a11yLanguage = useA11yLanguage();
   const { data, loading, error, reload } = usePokemonIndex();
-  const { types, selected, ids, select } = useTypeFilter();
+  const { types, selected, ids, toggle, clear, atLimit } = useTypeFilter();
   const { favorites } = useFavorites();
   const { markDataReady } = useBoot();
 
@@ -48,6 +49,7 @@ export default function Index() {
   const [query, setQuery] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("number");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   // Les deux filtres se croisent : deux boutons allumés doivent tous les deux
   // agir, sinon l'interface annonce un filtre qu'elle n'applique pas.
@@ -95,6 +97,7 @@ export default function Index() {
         >
           <View style={styles.controls}>
             <SearchBar value={query} onChangeText={setQuery} />
+            <TypeFilterButton count={selected.length} onPress={() => setFilterOpen(true)} />
             <Pressable
               style={[circleButton, { backgroundColor: theme.surface }]}
               onPress={() => setFavoritesOnly((current) => !current)}
@@ -115,11 +118,7 @@ export default function Index() {
       </SafeAreaView>
 
       <View style={[styles.surface, { backgroundColor: theme.surface }]}>
-        {/* Le filtre vit sur la surface, pas sur le bandeau : les types dont la
-            couleur approche le rouge d'identité y disparaissaient. */}
-        <View style={styles.filterRow}>
-          <TypeFilterBar types={types} selected={selected} onSelect={select} />
-        </View>
+        <ActiveTypeFilters selected={selected} resultCount={visible.length} onRemove={toggle} />
 
         {loading ? <Loader /> : null}
 
@@ -145,6 +144,17 @@ export default function Index() {
           />
         ) : null}
       </View>
+
+      <TypeFilterSheet
+        visible={filterOpen}
+        types={types}
+        selected={selected}
+        atLimit={atLimit}
+        resultCount={visible.length}
+        onToggle={toggle}
+        onClear={clear}
+        onClose={() => setFilterOpen(false)}
+      />
     </View>
   );
 }
@@ -155,11 +165,6 @@ const styles = StyleSheet.create({
   },
   filler: {
     flex: 1,
-  },
-  filterRow: {
-    marginHorizontal: -LIST_PADDING,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.sm,
   },
   controls: {
     flexDirection: "row",

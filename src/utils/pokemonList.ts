@@ -50,3 +50,14 @@ export function filterByIds(
   const allowed = new Set(ids);
   return list.filter((entry) => allowed.has(entry.id));
 }
+
+// Intersection (ET) : un identifiant ne reste que s'il figure dans chacune
+// des listes, pas seulement une.
+export function intersectIds(lists: number[][]): number[] {
+  if (lists.length === 0) {
+    return [];
+  }
+  const [first, ...rest] = lists;
+  const sets = rest.map((list) => new Set(list));
+  return [...new Set(first)].filter((id) => sets.every((set) => set.has(id)));
+}

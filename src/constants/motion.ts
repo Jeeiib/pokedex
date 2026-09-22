@@ -12,6 +12,9 @@ export const MOTION = {
   // withSpring peut consommer avant que l'ouverture soit jugée trop longue.
   splashSettleBudget: { duration: 500 },
   splashSpin: { duration: 900 },
+  // Une feuille monte plus lentement qu'elle ne redescend : l'ouverture
+  // s'annonce, la fermeture ne se fait pas attendre.
+  sheet: { enter: 280, exit: 200 },
   splashReveal: { duration: 400 },
   spring: { damping: 12, stiffness: 180 },
 } as const;

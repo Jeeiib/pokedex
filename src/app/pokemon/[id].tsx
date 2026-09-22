@@ -34,8 +34,7 @@ import { formatPokemonId } from "@/utils/formatPokemonId";
 import { parsePokemonId } from "@/utils/parsePokemonId";
 
 // Mesures du fichier Figma : bandeau de 76, cadre d'image de 144 traversé par
-// un artwork de 200 qui déborde de 56 sur la carte, pokéball de 208 en
-// filigrane, carte arrondie à 8 avec 56 de padding haut.
+// un artwork de 200 qui déborde de 56 sur la carte.
 const ARTWORK_SIZE = 200;
 const IMAGE_ROW_HEIGHT = 144;
 const CARD_PADDING_TOP = 56;
@@ -414,8 +413,8 @@ const styles = StyleSheet.create({
     width: ARTWORK_SIZE,
     height: ARTWORK_SIZE,
   },
-  // La carte descend jusqu'au bas de l'écran : encadrée comme dans la maquette,
-  // son liseré passait derrière les coins arrondis de l'iPhone.
+  // La carte descend jusqu'au bas de l'écran : ses seuls arrondis sont en
+  // haut, là où la couleur du type s'arrête.
   card: {
     flex: 1,
     borderTopLeftRadius: 16,

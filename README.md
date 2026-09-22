@@ -104,13 +104,21 @@ propriété `hitSlop` de React Native agrandit la zone du doigt mais pas le cadr
 exposé au système, donc VoiceOver continuait d'annoncer des cibles de 15 points.
 Les éléments ont été agrandis pour de vrai.
 
-### Le filtre par type quitte la fenêtre modale
+### Le filtre par type accepte deux types, combinés en ET
 
-La maquette cache les types derrière une feuille. Ils occupent désormais une
-bande horizontale sous la recherche : le type actif est visible en permanence et
-en changer coûte un seul appui au lieu de trois. Les types sont triés dans la
-langue affichée, et non plus dans l'ordre alphabétique de leurs identifiants
-anglais, qui paraissait aléatoire en français.
+La maquette ne retient qu'un type à la fois. La feuille en accepte deux : un
+Pokémon doit alors porter les deux pour rester dans la liste. La limite vient du
+domaine et non de l'interface, puisqu'une espèce n'a jamais plus de deux types,
+et qu'une troisième case cochée ne pourrait plus rien renvoyer.
+
+Les 18 types tiennent dans la feuille d'un seul coup d'oeil, triés dans la
+langue affichée plutôt que dans l'ordre alphabétique de leurs identifiants
+anglais, qui paraît aléatoire en français. Le filtre s'applique dès l'appui,
+sans bouton de validation, et les types retenus restent affichés sous la
+recherche avec le nombre de résultats : fermée, la feuille ne cache aucun état.
+La grille garde ainsi toute sa hauteur tant qu'aucun filtre n'est posé. Le voile
+et la feuille sont animés séparément, plus lentement à l'ouverture qu'à la
+fermeture, et l'animation respecte le réglage « Réduire les animations ».
 
 ### Le numéro de l'espèce remplace la Pokéball en filigrane
 

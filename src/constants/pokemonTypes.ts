@@ -1,6 +1,3 @@
-// Fonds relevés dans le Figma. La couleur de texte n'est pas celle de la
-// maquette : le blanc y tombe à 1,50 sur Electric, donc chaque type porte
-// le texte qui passe WCAG AA sur son propre fond.
 export const POKEMON_TYPES = {
   bug: { background: "#A7B723", foreground: "#1D1D1D" },
   dark: { background: "#75574C", foreground: "#FFFFFF" },

@@ -6,9 +6,6 @@ import { iconSize, spacing, TOUCH_TARGET, typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { useA11yLanguage } from "@/i18n";
 
-// Mesures du fichier Figma : hauteur 32, rayon 16, retrait 12 à gauche et 16 à
-// droite, icône de 16 à 8 du champ.
-
 type SearchBarProps = {
   value: string;
   onChangeText: (value: string) => void;
@@ -37,7 +34,7 @@ export default function SearchBar({ value, onChangeText }: SearchBarProps) {
         autoCorrect={false}
         autoCapitalize="none"
         returnKeyType="search"
-        accessibilityLabel={t("list.searchPlaceholder")}
+        accessibilityLabel={t("list.searchLabel")}
         accessibilityLanguage={a11yLanguage}
       />
     </View>
