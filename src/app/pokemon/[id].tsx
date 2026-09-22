@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import CryButton from "@/components/CryButton";
 import ErrorMessage from "@/components/ErrorMessage";
 import Loader from "@/components/Loader";
 import Pokeball from "@/components/Pokeball";
@@ -123,6 +124,12 @@ export default function PokemonDetail() {
           >
             {species.name}
           </Text>
+          <CryButton
+            slug={pokemon.slug}
+            officialUrl={pokemon.cryUrl}
+            name={species.name}
+            color={accent.foreground}
+          />
           <Text style={[styles.number, { color: accent.foreground }]}>
             {formatPokemonId(pokemon.id)}
           </Text>
