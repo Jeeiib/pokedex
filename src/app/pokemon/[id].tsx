@@ -441,6 +441,7 @@ const styles = StyleSheet.create({
   attribute: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "space-between",
     gap: spacing.xs,
   },
   attributeValueRow: {
@@ -459,7 +460,8 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
   },
   abilities: {
-    height: 32,
+    // Pas de hauteur figée : deux talents, ou un texte agrandi par le réglage
+    // système, doivent pousser le libellé au lieu de passer dessous.
     justifyContent: "center",
   },
   attributeLabel: {
