@@ -56,7 +56,7 @@ et `src/app/pokemon/[id].tsx` est la route dynamique de la fiche.
    disparaître du code la compétence évaluée.
 2. **URL d'artwork dérivée de l'identifiant** plutôt que lue dans la réponse de
    détail : la lire coûterait 1025 requêtes pour une valeur prévisible. Le calcul
-   est isolé dans `getArtworkUrl()`.
+   est isolé dans `getArtworkUrl()`, dans `src/utils/`.
 3. **Un appel GraphQL** au milieu d'un service REST. PokeAPI n'expose les noms
    traduits en une seule requête que par GraphQL ; la seule solution REST
    demanderait 1025 requêtes. L'appel est isolé dans `getNames()` et reste un

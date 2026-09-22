@@ -41,11 +41,3 @@ example
 # generated native folders
 /ios
 /android
-
-# Documents de conception, gardés hors du dépôt livré
-docs/superpowers/
-
-# Configuration d'outillage local
-CLAUDE.md
-AGENTS.md
-.claude/
