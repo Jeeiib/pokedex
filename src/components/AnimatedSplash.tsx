@@ -104,7 +104,7 @@ export default function AnimatedSplash() {
       importantForAccessibility="no-hide-descendants"
     >
       <Animated.Image
-        source={require("../../assets/images/splash-icon.png")}
+        source={require("@/assets/images/splash-icon.png")}
         style={[styles.ball, ballStyle]}
         resizeMode="contain"
       />

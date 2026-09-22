@@ -10,6 +10,8 @@ export const lightTheme = {
   // Le rouge d'identité ne donne que 3,24 en texte sur fond sombre, d'où un
   // jeton distinct du rouge de fond.
   primaryText: "#DC0A2D",
+  // Voile des feuilles modales : assombrit le fond sans le masquer.
+  scrim: "rgba(0, 0, 0, 0.4)",
 };
 
 export type Theme = typeof lightTheme;
@@ -28,6 +30,8 @@ export const darkTheme: Theme = {
   // Le rouge du Figma ne donne que 3,27 sur la surface sombre, d'où ce rouge
   // clairci réservé au texte.
   primaryText: "#FF4D6A",
+  // Voile des feuilles modales : assombrit le fond sans le masquer.
+  scrim: "rgba(0, 0, 0, 0.4)",
 };
 
 export const fonts = {
@@ -35,6 +39,8 @@ export const fonts = {
   bold: "Poppins_700Bold",
 };
 
+// Relevé complet des styles de texte du Figma : `body2` n'a pas de lecteur
+// actuellement, la table reste néanmoins le miroir exact de la maquette.
 export const typography = {
   headline: { fontFamily: fonts.bold, fontSize: 24, lineHeight: 32 },
   subtitle1: { fontFamily: fonts.bold, fontSize: 14, lineHeight: 16 },

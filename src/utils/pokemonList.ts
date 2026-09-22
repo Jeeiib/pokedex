@@ -17,7 +17,7 @@ export function normalizeSearch(value: string): string {
     .trim()
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "");
+    .replace(/[\u0300-\u036F]/g, "");
 }
 
 export function searchPokemons(list: PokemonSummary[], query: string): PokemonSummary[] {

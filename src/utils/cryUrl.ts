@@ -1,6 +1,5 @@
-// Décidé par la mesure de la tâche 9 : PokeAPI ne sert que de l'Ogg Vorbis,
-// qu'iOS ne décode pas. La source de repli sert du mp3, lu par les deux
-// plateformes.
+// PokeAPI ne sert que de l'Ogg Vorbis, qu'iOS ne décode pas. La source de
+// repli sert du mp3, lu par les deux plateformes.
 const USE_OFFICIAL_CRY = false;
 
 const SHOWDOWN_BASE = "https://play.pokemonshowdown.com/audio/cries";

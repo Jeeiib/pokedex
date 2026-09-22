@@ -2,7 +2,7 @@
 // retours à la ligne des boîtes de dialogue et des césures optionnelles.
 export function cleanFlavorText(text: string): string {
   return text
-    .replace(/­/g, "")
+    .replace(/\u00AD/g, "")
     .replace(/[\n\f\r]/g, " ")
     .replace(/\s+/g, " ")
     .trim();

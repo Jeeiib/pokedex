@@ -30,7 +30,7 @@ describe("parseFavorites", () => {
     expect(parseFavorites(null)).toEqual([]);
   });
 
-  // Le stockage peut avoir ete ecrit par une version precedente ou corrompu.
+  // Le stockage peut avoir été écrit par une version précédente ou corrompu.
   it("returns an empty list on malformed content", () => {
     expect(parseFavorites("not json")).toEqual([]);
     expect(parseFavorites('{"id":1}')).toEqual([]);

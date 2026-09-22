@@ -23,7 +23,9 @@ describe("MOTION", () => {
 
   it("keeps the whole opening under a second and a half", () => {
     const opening =
-      MOTION.splashThrow.duration + MOTION.splashSettle.duration + MOTION.splashReveal.duration;
+      MOTION.splashThrow.duration +
+      MOTION.splashSettleBudget.duration +
+      MOTION.splashReveal.duration;
     expect(opening).toBeLessThanOrEqual(1500);
   });
 });

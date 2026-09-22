@@ -6,7 +6,7 @@ describe("parsePokemonId", () => {
     expect(parsePokemonId("1025")).toBe(1025);
   });
 
-  // Couvre le point 1 du Review Focus : un identifiant absurde dans l'url.
+  // L'identifiant vient de l'url : il peut valoir n'importe quoi.
   it("rejects a non numeric parameter", () => {
     expect(parsePokemonId("abc")).toBeNull();
     expect(parsePokemonId("12abc")).toBeNull();

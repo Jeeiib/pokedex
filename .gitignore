@@ -42,5 +42,10 @@ example
 /ios
 /android
 
-# Documents de conception, gardes hors du depot livre
+# Documents de conception, gardés hors du dépôt livré
 docs/superpowers/
+
+# Configuration d'outillage local
+CLAUDE.md
+AGENTS.md
+.claude/

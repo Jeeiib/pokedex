@@ -1,8 +1,8 @@
 import { resolveCryUrl, toShowdownSlug } from "@/utils/cryUrl";
 
 describe("toShowdownSlug", () => {
-  // Les sept cas ont ete mesures : la source de repli renvoie 404 sur les
-  // slugs a tiret et 200 une fois colles.
+  // Les sept cas ont été mesurés : la source de repli renvoie 404 sur les
+  // slugs à tiret et 200 une fois collés.
   it("removes every hyphen from the api slug", () => {
     expect(toShowdownSlug("mr-mime")).toBe("mrmime");
     expect(toShowdownSlug("ho-oh")).toBe("hooh");
@@ -20,7 +20,7 @@ describe("toShowdownSlug", () => {
 });
 
 describe("resolveCryUrl", () => {
-  // Couvre le point 5 du Review Focus : aucune adresse jouable.
+  // Aucune adresse jouable : le bouton doit rester inerte.
   it("returns null when there is no official url and no slug", () => {
     expect(resolveCryUrl("", null)).toBeNull();
   });

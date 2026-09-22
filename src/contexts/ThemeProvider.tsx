@@ -35,20 +35,27 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // Le mode stocké est appliqué dès sa lecture. Le rendu ne l'attend pas :
   // l'écran de démarrage couvre encore ces quelques millisecondes.
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY).then((stored) => {
-      if (isMode(stored)) {
-        setModeState(stored);
-      }
-    });
+    let ignore = false;
+    AsyncStorage.getItem(STORAGE_KEY)
+      .then((stored) => {
+        if (!ignore && isMode(stored)) {
+          setModeState(stored);
+        }
+      })
+      // Un stockage illisible laisse le mode par défaut, il ne casse pas l'ouverture.
+      .catch(() => {});
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   function setMode(next: ThemeMode) {
     setModeState(next);
-    AsyncStorage.setItem(STORAGE_KEY, next);
+    AsyncStorage.setItem(STORAGE_KEY, next).catch(() => {});
   }
 
-  // useColorScheme peut renvoyer "unspecified" (RN recent) en plus de null :
-  // seul "dark" bascule le theme, tout le reste retombe sur le clair.
+  // useColorScheme peut renvoyer "unspecified" (RN récent) en plus de null :
+  // seul "dark" bascule le thème, tout le reste retombe sur le clair.
   const scheme = mode === "system" ? (systemScheme === "dark" ? "dark" : "light") : mode;
   const theme = scheme === "dark" ? darkTheme : lightTheme;
 

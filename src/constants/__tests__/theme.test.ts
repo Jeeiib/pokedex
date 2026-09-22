@@ -42,7 +42,7 @@ describe("darkTheme", () => {
     expect(contrast(darkTheme.textSecondary, darkTheme.surface)).toBeGreaterThanOrEqual(4.5);
   });
 
-  // Le rouge d'identite ne donne que 3,24 en texte sur fond sombre.
+  // Le rouge d'identité ne donne que 3,24 en texte sur fond sombre.
   it("lightens the red used as text", () => {
     expect(darkTheme.primaryText).not.toBe(lightTheme.primaryText);
     expect(contrast(darkTheme.primaryText, darkTheme.surface)).toBeGreaterThanOrEqual(4.5);

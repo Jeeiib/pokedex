@@ -17,21 +17,30 @@ const FavoritesContext = createContext<FavoritesContextValue>({
   toggle: () => {},
 });
 
-// Persistance simple : la liste d'identifiants favoris est relue au
-// démarrage et réécrite à chaque bascule.
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<number[]>([]);
 
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY).then((stored) => {
-      setFavorites(parseFavorites(stored));
-    });
+    let ignore = false;
+    AsyncStorage.getItem(STORAGE_KEY)
+      .then((stored) => {
+        if (!ignore) {
+          setFavorites(parseFavorites(stored));
+        }
+      })
+      // Un stockage illisible laisse la liste vide, il ne casse pas l'ouverture.
+      .catch(() => {});
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   function toggle(id: number) {
-    const next = toggleFavorite(favorites, id);
-    setFavorites(next);
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    setFavorites((current) => {
+      const next = toggleFavorite(current, id);
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch(() => {});
+      return next;
+    });
   }
 
   function isFavorite(id: number) {

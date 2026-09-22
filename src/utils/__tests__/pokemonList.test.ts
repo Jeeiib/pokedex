@@ -25,7 +25,7 @@ describe("mergeNames", () => {
     expect(merged[1].name).toBe("Salamèche");
   });
 
-  // Couvre le point 3 du Review Focus : une espece absente de la table.
+  // Une espèce absente de la table de noms doit garder son slug.
   it("keeps the slug when no translation exists", () => {
     const merged = mergeNames(index, new Map([[1, "Bulbizarre"]]));
     expect(merged[3].name).toBe("mew");
@@ -47,7 +47,7 @@ describe("mergeNames", () => {
 });
 
 describe("normalizeSearch", () => {
-  // Couvre le point 4 du Review Focus : saisie approximative.
+  // La saisie est approximative : casse, espaces, accents.
   it("lowercases, trims and strips accents", () => {
     expect(normalizeSearch("  MEW ")).toBe("mew");
     expect(normalizeSearch("Salamèche")).toBe("salameche");

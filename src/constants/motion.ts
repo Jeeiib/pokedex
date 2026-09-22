@@ -8,7 +8,9 @@ export const MOTION = {
   cry: { duration: 300, offset: 12 },
   favorite: { duration: 250, scale: 1.3 },
   splashThrow: { duration: 300, lift: 120 },
-  splashSettle: { duration: 500 },
+  // Ne pilote pas le ressort : elle borne seulement le budget de temps que
+  // withSpring peut consommer avant que l'ouverture soit jugée trop longue.
+  splashSettleBudget: { duration: 500 },
   splashSpin: { duration: 900 },
   splashReveal: { duration: 400 },
   spring: { damping: 12, stiffness: 180 },

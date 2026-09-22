@@ -2,12 +2,12 @@ import Svg, { Path, type SvgProps } from "react-native-svg";
 
 type PokeballProps = SvgProps & {
   size: number;
-  color?: string;
+  color: string;
 };
 
 // Pokéball du design system, exportée du fichier Figma. Le tracé est vectoriel
 // pour rester net du bandeau (24) au filigrane de la fiche (208).
-export default function Pokeball({ size, color = "#FFFFFF", ...props }: PokeballProps) {
+export default function Pokeball({ size, color, ...props }: PokeballProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 23.757 24" fill="none" {...props}>
       <Path
