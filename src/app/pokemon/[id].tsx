@@ -38,12 +38,16 @@ export default function PokemonDetail() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
   const id = parsePokemonId(rawId);
   const { t, i18n } = useTranslation();
-  const { theme } = useTheme();
+  const { theme, scheme } = useTheme();
   const a11yLanguage = useA11yLanguage();
   const { pokemon, species, loading, error, reload } = usePokemonDetail(id);
 
   // Le type du slot 1 donne la couleur de toute la fiche.
   const accent = getTypeColors(pokemon?.types[0] ?? "normal");
+  // Le rouge (et les autres teintes foncees) du type ne donne que 2,49 de
+  // contraste sur la surface sombre : les titres de section basculent sur le
+  // texte du theme en mode sombre, les aplats de type restent inchanges.
+  const sectionColor = scheme === "dark" ? theme.textPrimary : accent.background;
 
   // Navigation conditionnelle : on vérifie la borne avant de bouger, d'où la
   // forme impérative plutôt qu'un lien. `replace` évite d'empiler les fiches.
@@ -186,7 +190,7 @@ export default function PokemonDetail() {
             ))}
           </View>
 
-          <Text style={[styles.section, { color: accent.background }]}>{t("detail.about")}</Text>
+          <Text style={[styles.section, { color: sectionColor }]}>{t("detail.about")}</Text>
 
           <View style={styles.attributes}>
             <View style={styles.attribute}>
@@ -245,7 +249,7 @@ export default function PokemonDetail() {
             {species.description}
           </Text>
 
-          <Text style={[styles.section, { color: accent.background }]}>
+          <Text style={[styles.section, { color: sectionColor }]}>
             {t("detail.baseStats")}
           </Text>
 

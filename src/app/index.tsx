@@ -9,6 +9,7 @@ import PokedexHeader from "@/components/PokedexHeader";
 import PokemonCard from "@/components/PokemonCard";
 import SearchBar from "@/components/SearchBar";
 import SortMenu from "@/components/SortMenu";
+import ThemeToggle from "@/components/ThemeToggle";
 import { spacing, typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { usePokemonIndex } from "@/hooks/usePokemonIndex";
@@ -50,6 +51,7 @@ export default function Index() {
           <View style={styles.controls}>
             <SearchBar value={query} onChangeText={setQuery} />
             <SortMenu mode={sortMode} onChange={setSortMode} />
+            <ThemeToggle />
           </View>
         </PokedexHeader>
       </SafeAreaView>
