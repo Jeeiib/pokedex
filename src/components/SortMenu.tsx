@@ -3,12 +3,11 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
-import { elevation, spacing, typography } from "@/constants/theme";
+import { circleButton, elevation, iconSize, spacing, typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { useA11yLanguage } from "@/i18n";
 import type { SortMode } from "@/types/pokemon";
 
-const ICON_SIZE = 16;
 const MODES: SortMode[] = ["number", "name"];
 
 // L'icône du bouton reprend celle de la maquette : le dièse pour le tri par
@@ -41,14 +40,14 @@ export default function SortMenu({ mode, onChange }: SortMenuProps) {
   return (
     <>
       <Pressable
-        style={[styles.trigger, { backgroundColor: theme.surface }]}
+        style={[circleButton, { backgroundColor: theme.surface }]}
         onPress={() => setOpen(true)}
         accessibilityRole="button"
         accessibilityLabel={t("list.sortAction")}
         accessibilityValue={{ text: labelFor(mode) }}
         accessibilityLanguage={a11yLanguage}
       >
-        <MaterialIcons name={MODE_ICONS[mode]} size={ICON_SIZE} color={theme.primary} />
+        <MaterialIcons name={MODE_ICONS[mode]} size={iconSize.sm} color={theme.primary} />
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
@@ -106,13 +105,6 @@ export default function SortMenu({ mode, onChange }: SortMenuProps) {
 }
 
 const styles = StyleSheet.create({
-  trigger: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   backdrop: {
     flex: 1,
     alignItems: "flex-end",
@@ -143,9 +135,9 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   radio: {
-    width: ICON_SIZE,
-    height: ICON_SIZE,
-    borderRadius: ICON_SIZE / 2,
+    width: iconSize.sm,
+    height: iconSize.sm,
+    borderRadius: iconSize.sm / 2,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",

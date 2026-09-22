@@ -3,10 +3,10 @@ import { useAudioPlayer } from "expo-audio";
 import { useTranslation } from "react-i18next";
 import { Pressable } from "react-native";
 
+import { iconSize } from "@/constants/theme";
 import { useA11yLanguage } from "@/i18n";
 import { resolveCryUrl } from "@/utils/cryUrl";
 
-const ICON_SIZE = 24;
 
 type CryButtonProps = {
   slug: string;
@@ -42,7 +42,7 @@ export default function CryButton({ slug, officialUrl, name, color, onPlay }: Cr
       accessibilityLabel={t("detail.playCry", { name })}
       accessibilityLanguage={a11yLanguage}
     >
-      <MaterialIcons name="volume-up" size={ICON_SIZE} color={color} />
+      <MaterialIcons name="volume-up" size={iconSize.lg} color={color} />
     </Pressable>
   );
 }

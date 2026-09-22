@@ -2,12 +2,12 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import { AccessibilityInfo, Pressable } from "react-native";
 
+import { iconSize } from "@/constants/theme";
 import { useTheme, type ThemeMode } from "@/contexts/ThemeProvider";
 import { useA11yLanguage } from "@/i18n";
 
 // Trois états : suivre le téléphone, forcer le clair, forcer le sombre.
 const ORDER: ThemeMode[] = ["system", "light", "dark"];
-const ICON_SIZE = 20;
 
 export default function ThemeToggle() {
   const { t } = useTranslation();
@@ -36,7 +36,7 @@ export default function ThemeToggle() {
       accessibilityValue={{ text: t(`theme.${mode}`) }}
       accessibilityLanguage={a11yLanguage}
     >
-      <MaterialIcons name={icon} size={ICON_SIZE} color={theme.onPrimary} />
+      <MaterialIcons name={icon} size={iconSize.md} color={theme.onPrimary} />
     </Pressable>
   );
 }

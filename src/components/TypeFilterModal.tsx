@@ -4,12 +4,11 @@ import { useTranslation } from "react-i18next";
 import { Modal, Pressable, ScrollView, StyleSheet, Text } from "react-native";
 
 import { getTypeColors } from "@/constants/pokemonTypes";
-import { elevation, spacing, typography } from "@/constants/theme";
+import { circleButton, elevation, iconSize, spacing, typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { useA11yLanguage } from "@/i18n";
 import type { PokemonTypeOption } from "@/types/pokemon";
 
-const ICON_SIZE = 16;
 
 type TypeFilterModalProps = {
   types: PokemonTypeOption[];
@@ -32,7 +31,7 @@ export default function TypeFilterModal({ types, selected, onSelect }: TypeFilte
     <>
       <Pressable
         style={[
-          styles.trigger,
+          circleButton,
           { backgroundColor: selected ? getTypeColors(selected).background : theme.surface },
         ]}
         onPress={() => setOpen(true)}
@@ -43,7 +42,7 @@ export default function TypeFilterModal({ types, selected, onSelect }: TypeFilte
       >
         <MaterialIcons
           name="filter-list"
-          size={ICON_SIZE}
+          size={iconSize.sm}
           color={selected ? getTypeColors(selected).foreground : theme.primaryText}
         />
       </Pressable>
@@ -119,13 +118,6 @@ export default function TypeFilterModal({ types, selected, onSelect }: TypeFilte
 }
 
 const styles = StyleSheet.create({
-  trigger: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   backdrop: {
     flex: 1,
     justifyContent: "flex-end",

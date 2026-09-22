@@ -2,13 +2,12 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, TextInput, View } from "react-native";
 
-import { spacing, typography } from "@/constants/theme";
+import { iconSize, spacing, typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { useA11yLanguage } from "@/i18n";
 
 // Mesures du fichier Figma : hauteur 32, rayon 16, retrait 12 à gauche et 16 à
 // droite, icône de 16 à 8 du champ.
-const ICON_SIZE = 16;
 
 type SearchBarProps = {
   value: string;
@@ -22,7 +21,7 @@ export default function SearchBar({ value, onChangeText }: SearchBarProps) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.surface }]}>
-      <MaterialIcons name="search" size={ICON_SIZE} color={theme.primary} />
+      <MaterialIcons name="search" size={iconSize.sm} color={theme.primary} />
       <TextInput
         style={[styles.input, { color: theme.textPrimary }]}
         value={value}

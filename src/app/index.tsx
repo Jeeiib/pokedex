@@ -14,7 +14,7 @@ import SearchBar from "@/components/SearchBar";
 import SortMenu from "@/components/SortMenu";
 import ThemeToggle from "@/components/ThemeToggle";
 import TypeFilterModal from "@/components/TypeFilterModal";
-import { spacing, typography } from "@/constants/theme";
+import { circleButton, iconSize, spacing, typography } from "@/constants/theme";
 import { useBoot } from "@/contexts/BootProvider";
 import { useFavorites } from "@/contexts/FavoritesProvider";
 import { useTheme } from "@/contexts/ThemeProvider";
@@ -29,8 +29,6 @@ import { filterByIds, searchPokemons, sortPokemons } from "@/utils/pokemonList";
 const SURFACE_INSET = 4;
 const LIST_PADDING = 12;
 const COLUMNS = 3;
-const CIRCLE_SIZE = 32;
-const ICON_FAVORITES = 16;
 
 export default function Index() {
   const { t } = useTranslation();
@@ -98,7 +96,7 @@ export default function Index() {
             <SearchBar value={query} onChangeText={setQuery} />
             <TypeFilterModal types={types} selected={selected} onSelect={select} />
             <Pressable
-              style={[styles.circle, { backgroundColor: theme.surface }]}
+              style={[circleButton, { backgroundColor: theme.surface }]}
               onPress={() => setFavoritesOnly((current) => !current)}
               accessibilityRole="button"
               accessibilityState={{ selected: favoritesOnly }}
@@ -107,7 +105,7 @@ export default function Index() {
             >
               <MaterialIcons
                 name={favoritesOnly ? "favorite" : "favorite-border"}
-                size={ICON_FAVORITES}
+                size={iconSize.sm}
                 color={theme.primaryText}
               />
             </Pressable>
@@ -151,13 +149,6 @@ const styles = StyleSheet.create({
   },
   filler: {
     flex: 1,
-  },
-  circle: {
-    width: CIRCLE_SIZE,
-    height: CIRCLE_SIZE,
-    borderRadius: CIRCLE_SIZE / 2,
-    alignItems: "center",
-    justifyContent: "center",
   },
   controls: {
     flexDirection: "row",

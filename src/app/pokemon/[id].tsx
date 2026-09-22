@@ -24,7 +24,7 @@ import TypeBadge from "@/components/TypeBadge";
 import { MOTION } from "@/constants/motion";
 import { FIRST_SPECIES, LAST_SPECIES } from "@/constants/pokedex";
 import { getTypeColors } from "@/constants/pokemonTypes";
-import { spacing, typography } from "@/constants/theme";
+import { iconSize, spacing, typography } from "@/constants/theme";
 import { useBoot } from "@/contexts/BootProvider";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { usePokemonDetail } from "@/hooks/usePokemonDetail";
@@ -42,9 +42,6 @@ const IMAGE_ROW_HEIGHT = 144;
 const CARD_PADDING_TOP = 56;
 const WATERMARK_SIZE = 208;
 const WATERMARK_OPACITY = 0.1;
-const ICON_BACK = 32;
-const ICON_CHEVRON = 24;
-const ICON_MEASURE = 16;
 
 export default function PokemonDetail() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
@@ -186,7 +183,7 @@ export default function PokemonDetail() {
             accessibilityLabel={t("detail.back")}
             accessibilityLanguage={a11yLanguage}
           >
-            <MaterialIcons name="arrow-back" size={ICON_BACK} color={accent.foreground} />
+            <MaterialIcons name="arrow-back" size={iconSize.xl} color={accent.foreground} />
           </Pressable>
           <Text
             style={[styles.name, { color: accent.foreground }]}
@@ -226,7 +223,7 @@ export default function PokemonDetail() {
         >
           <MaterialIcons
             name="chevron-left"
-            size={ICON_CHEVRON}
+            size={iconSize.lg}
             color={accent.foreground}
             style={!canGoPrevious ? styles.disabled : undefined}
           />
@@ -242,7 +239,7 @@ export default function PokemonDetail() {
         >
           <MaterialIcons
             name="chevron-right"
-            size={ICON_CHEVRON}
+            size={iconSize.lg}
             color={accent.foreground}
             style={!canGoNext ? styles.disabled : undefined}
           />
@@ -272,7 +269,7 @@ export default function PokemonDetail() {
               <View style={styles.attributeValueRow}>
                 <MaterialIcons
                   name="monitor-weight"
-                  size={ICON_MEASURE}
+                  size={iconSize.sm}
                   color={theme.textPrimary}
                 />
                 <Text style={[styles.attributeValue, { color: theme.textPrimary }]}>
@@ -288,7 +285,7 @@ export default function PokemonDetail() {
 
             <View style={styles.attribute}>
               <View style={styles.attributeValueRow}>
-                <MaterialIcons name="straighten" size={ICON_MEASURE} color={theme.textPrimary} />
+                <MaterialIcons name="straighten" size={iconSize.sm} color={theme.textPrimary} />
                 <Text style={[styles.attributeValue, { color: theme.textPrimary }]}>
                   {formatDecimal(toMeters(pokemon.heightDm), i18n.language)} {t("detail.heightUnit")}
                 </Text>

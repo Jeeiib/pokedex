@@ -69,6 +69,24 @@ export const elevation = {
   },
 } as const;
 
+// Tailles d'icônes du Figma : 16 dans les contrôles, 20 pour les réglages du
+// bandeau, 24 dans la fiche, 32 pour le retour.
+export const iconSize = {
+  sm: 16,
+  md: 20,
+  lg: 24,
+  xl: 32,
+} as const;
+
+// Pastille ronde des contrôles de la liste : filtre, favoris, tri.
+export const circleButton = {
+  width: 32,
+  height: 32,
+  borderRadius: 16,
+  alignItems: "center",
+  justifyContent: "center",
+} as const;
+
 export const spacing = {
   xs: 4,
   sm: 8,

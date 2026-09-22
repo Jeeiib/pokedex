@@ -12,10 +12,10 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { MOTION } from "@/constants/motion";
+import { iconSize } from "@/constants/theme";
 import { useFavorites } from "@/contexts/FavoritesProvider";
 import { useA11yLanguage } from "@/i18n";
 
-const ICON_SIZE = 24;
 
 type FavoriteButtonProps = {
   id: number;
@@ -70,7 +70,7 @@ export default function FavoriteButton({ id, name, color }: FavoriteButtonProps)
       <Animated.View style={popStyle}>
         <MaterialIcons
           name={active ? "favorite" : "favorite-border"}
-          size={ICON_SIZE}
+          size={iconSize.lg}
           color={color}
         />
       </Animated.View>
