@@ -1,4 +1,4 @@
-import { Roboto_400Regular, Roboto_700Bold, useFonts } from "@expo-google-fonts/roboto";
+import { Poppins_400Regular, Poppins_700Bold, useFonts } from "@expo-google-fonts/poppins";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -11,8 +11,8 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
-    Roboto_400Regular,
-    Roboto_700Bold,
+    Poppins_400Regular,
+    Poppins_700Bold,
   });
 
   useEffect(() => {

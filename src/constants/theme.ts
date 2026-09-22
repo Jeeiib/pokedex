@@ -3,7 +3,7 @@
 export const lightTheme = {
   background: "#EFEFEF",
   surface: "#FFFFFF",
-  textPrimary: "#212121",
+  textPrimary: "#1D1D1D",
   textSecondary: "#666666",
   border: "#E0E0E0",
   primary: "#DC0A2D",
@@ -16,8 +16,8 @@ export const lightTheme = {
 export type Theme = typeof lightTheme;
 
 export const fonts = {
-  regular: "Roboto_400Regular",
-  bold: "Roboto_700Bold",
+  regular: "Poppins_400Regular",
+  bold: "Poppins_700Bold",
 };
 
 export const typography = {
@@ -36,13 +36,13 @@ export const elevation = {
     shadowColor: "#000000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
-    shadowRadius: 2,
+    shadowRadius: 3,
     elevation: 2,
   },
   high: {
     shadowColor: "#000000",
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.24,
+    shadowOpacity: 0.25,
     shadowRadius: 6,
     elevation: 6,
   },

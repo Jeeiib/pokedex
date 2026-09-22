@@ -31,8 +31,8 @@ describe("POKEMON_TYPES", () => {
   });
 
   it("uses dark text on light types", () => {
-    expect(POKEMON_TYPES.electric.foreground).toBe("#212121");
-    expect(POKEMON_TYPES.ice.foreground).toBe("#212121");
+    expect(POKEMON_TYPES.electric.foreground).toBe("#1D1D1D");
+    expect(POKEMON_TYPES.ice.foreground).toBe("#1D1D1D");
   });
 
   it("uses white text on dark types", () => {
@@ -43,7 +43,7 @@ describe("POKEMON_TYPES", () => {
 
 describe("getTypeColors", () => {
   it("returns the colors of the requested type", () => {
-    expect(getTypeColors("fire")).toEqual({ background: "#F57D31", foreground: "#212121" });
+    expect(getTypeColors("fire")).toEqual({ background: "#F57D31", foreground: "#1D1D1D" });
   });
 
   it("falls back to normal for an unknown type", () => {
