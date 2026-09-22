@@ -1,479 +1,124 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useLocalSearchParams } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import Animated, {
-  ReduceMotion,
-  useAnimatedStyle,
-  useSharedValue,
-  withSequence,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useCallback, useRef, useState } from "react";
+import {
+  FlatList,
+  StyleSheet,
+  useWindowDimensions,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+} from "react-native";
 
-import CryButton from "@/components/CryButton";
-import ErrorMessage from "@/components/ErrorMessage";
-import FavoriteButton from "@/components/FavoriteButton";
-import Loader from "@/components/Loader";
-import StatBar from "@/components/StatBar";
-import TypeBadge from "@/components/TypeBadge";
-import { MOTION } from "@/constants/motion";
+import PokemonPage from "@/components/PokemonPage";
 import { FIRST_SPECIES, LAST_SPECIES } from "@/constants/pokedex";
-import { getTypeColors } from "@/constants/pokemonTypes";
-import { iconSize, spacing, touchArea, typography } from "@/constants/theme";
-import { useBoot } from "@/contexts/BootProvider";
-import { useTheme } from "@/contexts/ThemeProvider";
-import { usePokemonDetail } from "@/hooks/usePokemonDetail";
-import { useA11yLanguage } from "@/i18n";
-import { getArtworkUrl } from "@/utils/artworkUrl";
-import { formatDecimal, toKilograms, toMeters } from "@/utils/formatMeasures";
-import { formatPokemonId } from "@/utils/formatPokemonId";
 import { parsePokemonId } from "@/utils/parsePokemonId";
 
-// Mesures du fichier Figma : bandeau de 76, cadre d'image de 144 traversé par
-// un artwork de 200 qui déborde de 56 sur la carte.
-const ARTWORK_SIZE = 200;
-const IMAGE_ROW_HEIGHT = 144;
-const CARD_PADDING_TOP = 56;
-const WATERMARK_OPACITY = 0.14;
+// Les espèces sont posées côte à côte dans une liste horizontale paginée : on
+// passe d'une fiche à l'autre au doigt, et l'écran glisse dans le sens du
+// geste. Seules trois pages sont montées à la fois.
+const IDS = Array.from(
+  { length: LAST_SPECIES - FIRST_SPECIES + 1 },
+  (_, index) => FIRST_SPECIES + index
+);
+
+function goBack() {
+  if (router.canGoBack()) {
+    router.back();
+    return;
+  }
+  router.replace("/");
+}
 
 export default function PokemonDetail() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
-  const id = parsePokemonId(rawId);
-  const { t, i18n } = useTranslation();
-  const { theme, scheme } = useTheme();
-  const a11yLanguage = useA11yLanguage();
-  const { pokemon, species, loading, error, reload } = usePokemonDetail(id);
-  const { markDataReady } = useBoot();
+  const requestedId = parsePokemonId(rawId);
+  const { width } = useWindowDimensions();
+  const listRef = useRef<FlatList<number>>(null);
+  const [currentId, setCurrentId] = useState(requestedId ?? FIRST_SPECIES);
 
-  // Une ouverture directe sur une fiche ne monte pas l'écran liste : c'est
-  // elle qui doit alors libérer l'écran de démarrage.
-  useEffect(() => {
-    if (!loading) {
-      markDataReady();
-    }
-  }, [loading, markDataReady]);
+  // L'adresse suit la fiche affichée : revenir en arrière, puis rouvrir la
+  // liste, doit retrouver le Pokémon qu'on regardait.
+  const show = useCallback((id: number) => {
+    setCurrentId(id);
+    router.setParams({ id: String(id) });
+  }, []);
 
-  // Deux mouvements qui s'additionnent : l'arrivée de l'artwork et le rebond
-  // du cri. Les séparer garde chaque valeur partagée dans un seul effet.
-  const artworkLift = useSharedValue<number>(MOTION.artwork.offset);
-  const artworkScale = useSharedValue<number>(0.9);
-  const cryBounce = useSharedValue<number>(0);
-  const [cryCount, setCryCount] = useState(0);
+  const onMomentumScrollEnd = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const index = Math.round(event.nativeEvent.contentOffset.x / width);
+      const id = IDS[index];
+      if (id !== undefined) {
+        show(id);
+      }
+    },
+    [width, show]
+  );
 
-  // L'artwork arrive quand les données sont là, pas au montage de l'écran.
-  useEffect(() => {
-    if (!pokemon) {
-      return;
-    }
-    artworkLift.value = MOTION.artwork.offset;
-    artworkScale.value = 0.9;
-    artworkLift.value = withSpring(0, { ...MOTION.spring, reduceMotion: ReduceMotion.System });
-    artworkScale.value = withSpring(1, { ...MOTION.spring, reduceMotion: ReduceMotion.System });
-  }, [pokemon, artworkLift, artworkScale]);
+  // Les flèches restent la seule façon de changer de fiche au lecteur d'écran,
+  // qui ne peut pas balayer : elles déclenchent le même défilement.
+  const goToNeighbour = useCallback(
+    (step: number) => {
+      const target = currentId + step;
+      if (target < FIRST_SPECIES || target > LAST_SPECIES) {
+        return;
+      }
+      listRef.current?.scrollToIndex({ index: target - FIRST_SPECIES, animated: true });
+      show(target);
+    },
+    [currentId, show]
+  );
 
-  // Un bond court accompagne le cri : le geste produit un effet visible. Le
-  // compteur sert de déclencheur, le compilateur React interdisant de toucher
-  // une valeur partagée ailleurs que dans un effet.
-  useEffect(() => {
-    if (cryCount === 0) {
-      return;
-    }
-    cryBounce.value = withSequence(
-      withTiming(-MOTION.cry.offset, {
-        duration: MOTION.cry.duration / 2,
-        reduceMotion: ReduceMotion.System,
-      }),
-      withSpring(0, { ...MOTION.spring, reduceMotion: ReduceMotion.System })
-    );
-  }, [cryCount, cryBounce]);
+  const renderItem = useCallback(
+    ({ item }: { item: number }) => (
+      <PokemonPage
+        id={item}
+        active={item === currentId}
+        canGoPrevious={item > FIRST_SPECIES}
+        canGoNext={item < LAST_SPECIES}
+        onNavigate={goToNeighbour}
+        onBack={goBack}
+      />
+    ),
+    [currentId, goToNeighbour]
+  );
 
-  const artworkStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateY: artworkLift.value + cryBounce.value },
-      { scale: artworkScale.value },
-    ],
-  }));
-
-  // Le type du slot 1 donne la couleur de toute la fiche.
-  const accent = getTypeColors(pokemon?.types[0] ?? "normal");
-  // Une teinte de type foncée ne donne que 2,49 de contraste sur la surface
-  // sombre : les titres de section passent au texte du thème, les aplats de
-  // type restent inchangés.
-  const sectionColor = scheme === "dark" ? theme.textPrimary : accent.background;
-
-  // Navigation conditionnelle : on vérifie la borne avant de bouger, d'où la
-  // forme impérative plutôt qu'un lien. `replace` évite d'empiler les fiches.
-  function goToNeighbour(step: number) {
-    if (id === null) {
-      return;
-    }
-    const target = id + step;
-    if (target < FIRST_SPECIES || target > LAST_SPECIES) {
-      return;
-    }
-    router.replace({ pathname: "/pokemon/[id]", params: { id: String(target) } });
-  }
-
-  function goBack() {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
-    router.replace("/");
-  }
-
-  if (loading) {
+  // Un numéro absent de la Pokédex n'a pas de place dans la liste : la fiche
+  // seule affiche alors son erreur.
+  if (requestedId === null) {
     return (
-      <SafeAreaView style={[styles.fallback, { backgroundColor: theme.background }]}>
-        <StatusBar style={scheme === "dark" ? "light" : "dark"} />
-        <Loader />
-      </SafeAreaView>
+      <PokemonPage
+        id={null}
+        active
+        canGoPrevious={false}
+        canGoNext={false}
+        onNavigate={() => {}}
+        onBack={goBack}
+      />
     );
   }
-
-  if (error || !pokemon || !species) {
-    return (
-      <SafeAreaView style={[styles.fallback, { backgroundColor: theme.background }]}>
-        <StatusBar style={scheme === "dark" ? "light" : "dark"} />
-        <ErrorMessage
-          message={error === "notFound" ? t("state.notFound") : t("state.error")}
-          onRetry={reload}
-        />
-        <Pressable
-          style={styles.fallbackBack}
-          onPress={goBack}
-          accessibilityRole="button"
-          accessibilityLabel={t("detail.back")}
-          accessibilityLanguage={a11yLanguage}
-        >
-          <Text style={[styles.fallbackBackLabel, { color: theme.primaryText }]}>
-            {t("detail.back")}
-          </Text>
-        </Pressable>
-      </SafeAreaView>
-    );
-  }
-
-  const canGoPrevious = id !== null && id > FIRST_SPECIES;
-  const canGoNext = id !== null && id < LAST_SPECIES;
 
   return (
-    <View style={[styles.screen, { backgroundColor: accent.background }]}>
-      {/* Le haut de l'écran est peint par la couleur du type : la barre d'état
-          suit la couleur de texte que la table du type a validée. */}
-      <StatusBar style={accent.foreground === "#FFFFFF" ? "light" : "dark"} />
-
-      {/* Le filigrane porte le numéro de l'espèce, pas une décoration : dans
-          un Pokédex, le numéro est l'identité de la créature. */}
-      <Text
-        style={[styles.watermark, { color: accent.foreground }]}
-        pointerEvents="none"
-        accessible={false}
-        importantForAccessibility="no"
-        numberOfLines={1}
-      >
-        {formatPokemonId(pokemon.id).replace("#", "")}
-      </Text>
-
-      <SafeAreaView edges={["top"]}>
-        <View style={styles.title}>
-          <Pressable
-            style={touchArea}
-            onPress={goBack}
-            accessibilityRole="button"
-            accessibilityLabel={t("detail.back")}
-            accessibilityLanguage={a11yLanguage}
-          >
-            <MaterialIcons name="arrow-back" size={iconSize.xl} color={accent.foreground} />
-          </Pressable>
-          <Text
-            style={[styles.name, { color: accent.foreground }]}
-            numberOfLines={1}
-            accessibilityRole="header"
-            accessibilityLanguage={a11yLanguage}
-          >
-            {species.name}
-          </Text>
-          <CryButton
-            slug={pokemon.slug}
-            officialUrl={pokemon.cryUrl}
-            name={species.name}
-            color={accent.foreground}
-            onPlay={() => setCryCount((current) => current + 1)}
-          />
-          <FavoriteButton
-            key={pokemon.id}
-            id={pokemon.id}
-            name={species.name}
-            color={accent.foreground}
-          />
-        </View>
-      </SafeAreaView>
-
-      <View style={styles.imageRow}>
-        <Pressable
-          style={touchArea}
-          onPress={() => goToNeighbour(-1)}
-          disabled={!canGoPrevious}
-          accessibilityRole="button"
-          accessibilityLabel={t("detail.previous")}
-          accessibilityLanguage={a11yLanguage}
-        >
-          <MaterialIcons
-            name="chevron-left"
-            size={iconSize.lg}
-            color={accent.foreground}
-            style={!canGoPrevious ? styles.disabled : undefined}
-          />
-        </Pressable>
-
-        <Pressable
-          style={touchArea}
-          onPress={() => goToNeighbour(1)}
-          disabled={!canGoNext}
-          accessibilityRole="button"
-          accessibilityLabel={t("detail.next")}
-          accessibilityLanguage={a11yLanguage}
-        >
-          <MaterialIcons
-            name="chevron-right"
-            size={iconSize.lg}
-            color={accent.foreground}
-            style={!canGoNext ? styles.disabled : undefined}
-          />
-        </Pressable>
-
-        {/* L'artwork vit dans un emplacement qui couvre la rangée : centré en
-            absolu il se collerait à gauche, et il masquerait les flèches. */}
-        <View style={styles.artworkSlot} pointerEvents="none">
-          <Animated.Image
-            source={{ uri: getArtworkUrl(pokemon.id) }}
-            style={[styles.artwork, artworkStyle]}
-            resizeMode="contain"
-            accessible={false}
-            importantForAccessibility="no"
-          />
-        </View>
-      </View>
-
-      <View style={[styles.card, { backgroundColor: theme.surface }]}>
-        <ScrollView contentContainerStyle={styles.cardContent} showsVerticalScrollIndicator={false}>
-          <View style={styles.types}>
-            {pokemon.types.map((slug, index) => (
-              <TypeBadge key={slug} slug={slug} label={t(`types.${slug}`)} index={index} />
-            ))}
-          </View>
-
-          <Text style={[styles.section, { color: sectionColor }]}>{t("detail.about")}</Text>
-
-          <View style={styles.attributes}>
-            <View style={styles.attribute}>
-              <View style={styles.attributeValueRow}>
-                <MaterialIcons
-                  name="monitor-weight"
-                  size={iconSize.sm}
-                  color={theme.textPrimary}
-                  accessibilityElementsHidden
-                  importantForAccessibility="no-hide-descendants"
-                />
-                <Text style={[styles.attributeValue, { color: theme.textPrimary }]}>
-                  {formatDecimal(toKilograms(pokemon.weightHg), i18n.language)} {t("detail.weightUnit")}
-                </Text>
-              </View>
-              <Text style={[styles.attributeLabel, { color: theme.textSecondary }]}>
-                {t("detail.weight")}
-              </Text>
-            </View>
-
-            <View style={[styles.attributeDivider, { backgroundColor: theme.border }]} />
-
-            <View style={styles.attribute}>
-              <View style={styles.attributeValueRow}>
-                <MaterialIcons
-                  name="straighten"
-                  size={iconSize.sm}
-                  color={theme.textPrimary}
-                  accessibilityElementsHidden
-                  importantForAccessibility="no-hide-descendants"
-                />
-                <Text style={[styles.attributeValue, { color: theme.textPrimary }]}>
-                  {formatDecimal(toMeters(pokemon.heightDm), i18n.language)} {t("detail.heightUnit")}
-                </Text>
-              </View>
-              <Text style={[styles.attributeLabel, { color: theme.textSecondary }]}>
-                {t("detail.height")}
-              </Text>
-            </View>
-
-            <View style={[styles.attributeDivider, { backgroundColor: theme.border }]} />
-
-            <View style={styles.attribute}>
-              <View style={styles.abilities}>
-                {pokemon.abilities.map((ability) => (
-                  <Text
-                    key={ability}
-                    style={[styles.attributeValue, styles.abilityValue, { color: theme.textPrimary }]}
-                  >
-                    {ability}
-                  </Text>
-                ))}
-              </View>
-              <Text style={[styles.attributeLabel, { color: theme.textSecondary }]}>
-                {t("detail.abilities")}
-              </Text>
-            </View>
-          </View>
-
-          <Text
-            style={[styles.description, { color: theme.textPrimary }]}
-            accessibilityLanguage={a11yLanguage}
-          >
-            {species.description}
-          </Text>
-
-          <Text style={[styles.section, { color: sectionColor }]}>
-            {t("detail.baseStats")}
-          </Text>
-
-          <View>
-            {pokemon.stats.map((stat, index) => (
-              <StatBar
-                key={stat.slug}
-                label={t(`stats.${stat.slug}`)}
-                value={stat.value}
-                color={accent.background}
-                index={index}
-              />
-            ))}
-          </View>
-        </ScrollView>
-      </View>
-    </View>
+    <FlatList
+      ref={listRef}
+      style={styles.pager}
+      data={IDS}
+      extraData={currentId}
+      renderItem={renderItem}
+      keyExtractor={(item) => String(item)}
+      horizontal
+      pagingEnabled
+      showsHorizontalScrollIndicator={false}
+      initialScrollIndex={requestedId - FIRST_SPECIES}
+      getItemLayout={(_, index) => ({ length: width, offset: width * index, index })}
+      initialNumToRender={1}
+      maxToRenderPerBatch={1}
+      windowSize={3}
+      onMomentumScrollEnd={onMomentumScrollEnd}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
+  pager: {
     flex: 1,
-  },
-  fallback: {
-    flex: 1,
-  },
-  fallbackBack: {
-    alignItems: "center",
-    paddingBottom: spacing.lg,
-  },
-  fallbackBackLabel: {
-    ...typography.sectionTitle,
-  },
-  watermark: {
-    ...typography.watermark,
-    position: "absolute",
-    top: 108,
-    right: -16,
-    opacity: WATERMARK_OPACITY,
-  },
-  title: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    paddingTop: 20,
-    paddingBottom: spacing.lg,
-    paddingHorizontal: 20,
-  },
-  name: {
-    ...typography.pokemonName,
-    flex: 1,
-    textTransform: "capitalize",
-  },
-  imageRow: {
-    height: IMAGE_ROW_HEIGHT,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: spacing.md,
-    zIndex: 2,
-  },
-  disabled: {
-    opacity: 0.3,
-  },
-  artworkSlot: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-  },
-  artwork: {
-    width: ARTWORK_SIZE,
-    height: ARTWORK_SIZE,
-  },
-  // La carte descend jusqu'au bas de l'écran : ses seuls arrondis sont en
-  // haut, là où la couleur du type s'arrête.
-  card: {
-    flex: 1,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    zIndex: 1,
-  },
-  cardContent: {
-    paddingTop: CARD_PADDING_TOP,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    gap: spacing.md,
-  },
-  types: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: spacing.md,
-  },
-  section: {
-    ...typography.sectionTitle,
-    textAlign: "center",
-  },
-  attributes: {
-    flexDirection: "row",
-  },
-  attribute: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: spacing.xs,
-  },
-  attributeValueRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.sm,
-    paddingVertical: spacing.sm,
-  },
-  attributeValue: {
-    ...typography.measureValue,
-  },
-  // Seuls les talents viennent de l'API en minuscules ; une unité SI ne prend
-  // jamais de majuscule, d'où la distinction.
-  abilityValue: {
-    textTransform: "capitalize",
-  },
-  abilities: {
-    // Pas de hauteur figée : deux talents, ou un texte agrandi par le réglage
-    // système, doivent pousser le libellé au lieu de passer dessous.
-    justifyContent: "center",
-  },
-  attributeLabel: {
-    ...typography.caption,
-    textAlign: "center",
-  },
-  attributeDivider: {
-    width: StyleSheet.hairlineWidth,
-    alignSelf: "stretch",
-  },
-  description: {
-    ...typography.body,
   },
 });
