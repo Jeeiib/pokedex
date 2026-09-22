@@ -4,6 +4,7 @@ import { AccessibilityInfo, FlatList, StyleSheet, Text, View } from "react-nativ
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import ErrorMessage from "@/components/ErrorMessage";
+import LanguageToggle from "@/components/LanguageToggle";
 import Loader from "@/components/Loader";
 import PokedexHeader from "@/components/PokedexHeader";
 import PokemonCard from "@/components/PokemonCard";
@@ -51,6 +52,7 @@ export default function Index() {
           <View style={styles.controls}>
             <SearchBar value={query} onChangeText={setQuery} />
             <SortMenu mode={sortMode} onChange={setSortMode} />
+            <LanguageToggle />
             <ThemeToggle />
           </View>
         </PokedexHeader>

@@ -1,0 +1,82 @@
+{
+  "app": {
+    "title": "Pokédex"
+  },
+  "list": {
+    "searchPlaceholder": "Search a Pokémon",
+    "empty": "No Pokémon matches",
+    "results_one": "{{count}} Pokémon found",
+    "results_other": "{{count}} Pokémon found",
+    "sortTitle": "Sort by",
+    "sortByNumber": "Number",
+    "sortByName": "Name",
+    "sortAction": "Change sorting",
+    "filterTitle": "Filter by type",
+    "filterAction": "Filter by type",
+    "filterClear": "All types",
+    "favoritesOnly": "Favourites only"
+  },
+  "detail": {
+    "back": "Back to the list",
+    "about": "About",
+    "weight": "Weight",
+    "height": "Height",
+    "abilities": "Abilities",
+    "baseStats": "Base Stats",
+    "previous": "Previous Pokémon",
+    "next": "Next Pokémon",
+    "playCry": "Play {{name}} cry"
+  },
+  "stats": {
+    "hp": "HP",
+    "attack": "Attack",
+    "defense": "Defense",
+    "special-attack": "Sp. Atk",
+    "special-defense": "Sp. Def",
+    "speed": "Speed"
+  },
+  "types": {
+    "normal": "Normal",
+    "fire": "Fire",
+    "water": "Water",
+    "electric": "Electric",
+    "grass": "Grass",
+    "ice": "Ice",
+    "fighting": "Fighting",
+    "poison": "Poison",
+    "ground": "Ground",
+    "flying": "Flying",
+    "psychic": "Psychic",
+    "bug": "Bug",
+    "rock": "Rock",
+    "ghost": "Ghost",
+    "dragon": "Dragon",
+    "dark": "Dark",
+    "steel": "Steel",
+    "fairy": "Fairy"
+  },
+  "state": {
+    "loading": "Loading",
+    "error": "Loading failed",
+    "retry": "Try again",
+    "notFound": "This Pokémon does not exist"
+  },
+  "theme": {
+    "action": "Change theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "announceLight": "Light theme enabled",
+    "announceDark": "Dark theme enabled"
+  },
+  "favorites": {
+    "add": "Add {{name}} to favourites",
+    "remove": "Remove {{name}} from favourites",
+    "announceAdded": "{{name}} added to favourites",
+    "announceRemoved": "{{name}} removed from favourites"
+  },
+  "language": {
+    "action": "Change language",
+    "announce": "Language changed"
+  }
+}
