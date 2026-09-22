@@ -1,53 +1,372 @@
-import { Link, useLocalSearchParams } from "expo-router";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import ErrorMessage from "@/components/ErrorMessage";
+import Loader from "@/components/Loader";
+import Pokeball from "@/components/Pokeball";
+import StatBar from "@/components/StatBar";
+import TypeBadge from "@/components/TypeBadge";
+import { getTypeColors } from "@/constants/pokemonTypes";
 import { spacing, typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
+import { usePokemonDetail } from "@/hooks/usePokemonDetail";
 import { useA11yLanguage } from "@/i18n";
+import { getArtworkUrl } from "@/services/pokemonService";
+import { formatDecimal, toKilograms, toMeters } from "@/utils/formatMeasures";
 import { formatPokemonId } from "@/utils/formatPokemonId";
+import { parsePokemonId } from "@/utils/parsePokemonId";
 
-// Écran provisoire : la tâche 12 le remplace par la fiche complète. Il vérifie
-// dès à présent que le paramètre de route arrive bien.
+// Mesures du fichier Figma : bandeau de 76, cadre d'image de 144 traversé par
+// un artwork de 200 qui déborde de 56 sur la carte, pokéball de 208 en
+// filigrane, carte arrondie à 8 avec 56 de padding haut.
+const FIRST_SPECIES = 1;
+const LAST_SPECIES = 1025;
+const ARTWORK_SIZE = 200;
+const IMAGE_ROW_HEIGHT = 144;
+const CARD_PADDING_TOP = 56;
+const WATERMARK_SIZE = 208;
+const WATERMARK_OPACITY = 0.1;
+const ICON_BACK = 32;
+const ICON_CHEVRON = 24;
+const ICON_MEASURE = 16;
+
 export default function PokemonDetail() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
-  const id = Number(rawId);
-  const { t } = useTranslation();
+  const id = parsePokemonId(rawId);
+  const { t, i18n } = useTranslation();
   const { theme } = useTheme();
   const a11yLanguage = useA11yLanguage();
+  const { pokemon, species, loading, error, reload } = usePokemonDetail(id);
 
-  return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
-      <View style={styles.content}>
-        <Text
-          style={[styles.value, { color: theme.textPrimary }]}
+  // Le type du slot 1 donne la couleur de toute la fiche.
+  const accent = getTypeColors(pokemon?.types[0] ?? "normal");
+
+  // Navigation conditionnelle : on vérifie la borne avant de bouger, d'où la
+  // forme impérative plutôt qu'un lien. `replace` évite d'empiler les fiches.
+  function goToNeighbour(step: number) {
+    if (id === null) {
+      return;
+    }
+    const target = id + step;
+    if (target < FIRST_SPECIES || target > LAST_SPECIES) {
+      return;
+    }
+    router.replace({ pathname: "/pokemon/[id]", params: { id: String(target) } });
+  }
+
+  function goBack() {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+    router.replace("/");
+  }
+
+  if (loading) {
+    return (
+      <SafeAreaView style={[styles.fallback, { backgroundColor: theme.background }]}>
+        <Loader />
+      </SafeAreaView>
+    );
+  }
+
+  if (error || !pokemon || !species) {
+    return (
+      <SafeAreaView style={[styles.fallback, { backgroundColor: theme.background }]}>
+        <ErrorMessage
+          message={error === "notFound" ? t("state.notFound") : t("state.error")}
+          onRetry={reload}
+        />
+        <Pressable
+          style={styles.fallbackBack}
+          onPress={goBack}
+          accessibilityRole="button"
+          accessibilityLabel={t("detail.back")}
           accessibilityLanguage={a11yLanguage}
         >
-          {Number.isInteger(id) ? formatPokemonId(id) : t("state.notFound")}
-        </Text>
-        <Link href="/" style={[styles.back, { color: theme.primaryText }]}>
-          {t("detail.back")}
-        </Link>
+          <Text style={[styles.fallbackBackLabel, { color: theme.primaryText }]}>
+            {t("detail.back")}
+          </Text>
+        </Pressable>
+      </SafeAreaView>
+    );
+  }
+
+  const canGoPrevious = id !== null && id > FIRST_SPECIES;
+  const canGoNext = id !== null && id < LAST_SPECIES;
+
+  return (
+    <View style={[styles.screen, { backgroundColor: accent.background }]}>
+      <View style={styles.watermark} pointerEvents="none">
+        <Pokeball size={WATERMARK_SIZE} color={accent.foreground} opacity={WATERMARK_OPACITY} />
       </View>
-    </SafeAreaView>
+
+      <SafeAreaView edges={["top"]}>
+        <View style={styles.title}>
+          <Pressable
+            onPress={goBack}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={t("detail.back")}
+            accessibilityLanguage={a11yLanguage}
+          >
+            <MaterialIcons name="arrow-back" size={ICON_BACK} color={accent.foreground} />
+          </Pressable>
+          <Text
+            style={[styles.name, { color: accent.foreground }]}
+            numberOfLines={1}
+            accessibilityRole="header"
+            accessibilityLanguage={a11yLanguage}
+          >
+            {species.name}
+          </Text>
+          <Text style={[styles.number, { color: accent.foreground }]}>
+            {formatPokemonId(pokemon.id)}
+          </Text>
+        </View>
+      </SafeAreaView>
+
+      <View style={styles.imageRow}>
+        <Pressable
+          onPress={() => goToNeighbour(-1)}
+          disabled={!canGoPrevious}
+          hitSlop={12}
+          accessibilityRole="button"
+          accessibilityLabel={t("detail.previous")}
+          accessibilityLanguage={a11yLanguage}
+        >
+          <MaterialIcons
+            name="chevron-left"
+            size={ICON_CHEVRON}
+            color={accent.foreground}
+            style={!canGoPrevious ? styles.disabled : undefined}
+          />
+        </Pressable>
+
+        <Pressable
+          onPress={() => goToNeighbour(1)}
+          disabled={!canGoNext}
+          hitSlop={12}
+          accessibilityRole="button"
+          accessibilityLabel={t("detail.next")}
+          accessibilityLanguage={a11yLanguage}
+        >
+          <MaterialIcons
+            name="chevron-right"
+            size={ICON_CHEVRON}
+            color={accent.foreground}
+            style={!canGoNext ? styles.disabled : undefined}
+          />
+        </Pressable>
+
+        <Image
+          source={{ uri: getArtworkUrl(pokemon.id) }}
+          style={styles.artwork}
+          resizeMode="contain"
+          accessible={false}
+          importantForAccessibility="no"
+        />
+      </View>
+
+      <View style={[styles.card, { backgroundColor: theme.surface }]}>
+        <ScrollView contentContainerStyle={styles.cardContent} showsVerticalScrollIndicator={false}>
+          <View style={styles.types}>
+            {pokemon.types.map((slug) => (
+              <TypeBadge key={slug} slug={slug} label={t(`types.${slug}`)} />
+            ))}
+          </View>
+
+          <Text style={[styles.section, { color: accent.background }]}>{t("detail.about")}</Text>
+
+          <View style={styles.attributes}>
+            <View style={styles.attribute}>
+              <View style={styles.attributeValueRow}>
+                <MaterialIcons
+                  name="monitor-weight"
+                  size={ICON_MEASURE}
+                  color={theme.textPrimary}
+                />
+                <Text style={[styles.attributeValue, { color: theme.textPrimary }]}>
+                  {formatDecimal(toKilograms(pokemon.weightHg), i18n.language)} kg
+                </Text>
+              </View>
+              <Text style={[styles.attributeLabel, { color: theme.textSecondary }]}>
+                {t("detail.weight")}
+              </Text>
+            </View>
+
+            <View style={[styles.attributeDivider, { backgroundColor: theme.border }]} />
+
+            <View style={styles.attribute}>
+              <View style={styles.attributeValueRow}>
+                <MaterialIcons name="straighten" size={ICON_MEASURE} color={theme.textPrimary} />
+                <Text style={[styles.attributeValue, { color: theme.textPrimary }]}>
+                  {formatDecimal(toMeters(pokemon.heightDm), i18n.language)} m
+                </Text>
+              </View>
+              <Text style={[styles.attributeLabel, { color: theme.textSecondary }]}>
+                {t("detail.height")}
+              </Text>
+            </View>
+
+            <View style={[styles.attributeDivider, { backgroundColor: theme.border }]} />
+
+            <View style={styles.attribute}>
+              <View style={styles.abilities}>
+                {pokemon.abilities.map((ability) => (
+                  <Text
+                    key={ability}
+                    style={[styles.attributeValue, { color: theme.textPrimary }]}
+                  >
+                    {ability}
+                  </Text>
+                ))}
+              </View>
+              <Text style={[styles.attributeLabel, { color: theme.textSecondary }]}>
+                {t("detail.abilities")}
+              </Text>
+            </View>
+          </View>
+
+          <Text
+            style={[styles.description, { color: theme.textPrimary }]}
+            accessibilityLanguage={a11yLanguage}
+          >
+            {species.description}
+          </Text>
+
+          <Text style={[styles.section, { color: accent.background }]}>
+            {t("detail.baseStats")}
+          </Text>
+
+          <View>
+            {pokemon.stats.map((stat, index) => (
+              <StatBar
+                key={stat.slug}
+                label={t(`stats.${stat.slug}`)}
+                value={stat.value}
+                color={accent.background}
+                index={index}
+              />
+            ))}
+          </View>
+        </ScrollView>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  screen: {
+    flex: 1,
+    padding: 4,
+  },
+  fallback: {
     flex: 1,
   },
-  content: {
-    flex: 1,
+  fallbackBack: {
     alignItems: "center",
+    paddingBottom: spacing.lg,
+  },
+  fallbackBackLabel: {
+    ...typography.subtitle1,
+  },
+  watermark: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+  },
+  title: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    paddingTop: 20,
+    paddingBottom: spacing.lg,
+    paddingHorizontal: 20,
+  },
+  name: {
+    ...typography.headline,
+    flex: 1,
+    textTransform: "capitalize",
+  },
+  number: {
+    ...typography.subtitle2,
+  },
+  imageRow: {
+    height: IMAGE_ROW_HEIGHT,
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: spacing.md,
+    zIndex: 2,
+  },
+  disabled: {
+    opacity: 0.3,
+  },
+  artwork: {
+    position: "absolute",
+    alignSelf: "center",
+    top: 0,
+    width: ARTWORK_SIZE,
+    height: ARTWORK_SIZE,
+  },
+  card: {
+    flex: 1,
+    borderRadius: 8,
+    zIndex: 1,
+  },
+  cardContent: {
+    paddingTop: CARD_PADDING_TOP,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    gap: spacing.md,
+  },
+  types: {
+    flexDirection: "row",
     justifyContent: "center",
     gap: spacing.md,
   },
-  value: {
-    ...typography.headline,
-  },
-  back: {
+  section: {
     ...typography.subtitle1,
+    textAlign: "center",
+  },
+  attributes: {
+    flexDirection: "row",
+  },
+  attribute: {
+    flex: 1,
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  attributeValueRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
+  },
+  attributeValue: {
+    ...typography.body3,
+    textTransform: "capitalize",
+  },
+  abilities: {
+    height: 32,
+    justifyContent: "center",
+  },
+  attributeLabel: {
+    ...typography.caption,
+    textAlign: "center",
+  },
+  attributeDivider: {
+    width: StyleSheet.hairlineWidth,
+    alignSelf: "stretch",
+  },
+  description: {
+    ...typography.body3,
+    textAlign: "justify",
   },
 });
