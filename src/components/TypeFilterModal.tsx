@@ -1,5 +1,5 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -17,10 +17,20 @@ type TypeFilterModalProps = {
 };
 
 export default function TypeFilterModal({ types, selected, onSelect }: TypeFilterModalProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { theme } = useTheme();
   const a11yLanguage = useA11yLanguage();
   const [open, setOpen] = useState(false);
+
+  // Les types arrivent dans l'ordre alphabétique de leurs identifiants anglais,
+  // ce qui paraît désordonné une fois les noms traduits.
+  const sorted = useMemo(
+    () =>
+      [...types].sort((left, right) =>
+        t(`types.${left.slug}`).localeCompare(t(`types.${right.slug}`), i18n.language)
+      ),
+    [types, t, i18n.language]
+  );
 
   function choose(slug: string | null) {
     onSelect(slug);
@@ -82,7 +92,7 @@ export default function TypeFilterModal({ types, selected, onSelect }: TypeFilte
                 </Text>
               </Pressable>
 
-              {types.map((type) => {
+              {sorted.map((type) => {
                 const colors = getTypeColors(type.slug);
                 // Le nom vient de la traduction locale, jamais du slug brut
                 // ni du nom renvoyé par l'API.

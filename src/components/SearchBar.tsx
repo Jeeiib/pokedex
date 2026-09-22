@@ -21,7 +21,13 @@ export default function SearchBar({ value, onChangeText }: SearchBarProps) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.surface }]}>
-      <MaterialIcons name="search" size={iconSize.sm} color={theme.primary} />
+      <MaterialIcons
+        name="search"
+        size={iconSize.sm}
+        color={theme.primary}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      />
       <TextInput
         style={[styles.input, { color: theme.textPrimary }]}
         value={value}

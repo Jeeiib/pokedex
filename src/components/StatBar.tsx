@@ -22,8 +22,10 @@ const MAX_BASE_STAT = 255;
 // Mesures du fichier Figma : ligne de 16, libellé sur 27, valeur sur 19,
 // barre de 4 de haut. La piste est la couleur du type à 20 pour cent.
 const ROW_HEIGHT = 16;
-const LABEL_WIDTH = 27;
-const VALUE_WIDTH = 19;
+// Largeurs calées sur les libellés français, plus longs que les trois lettres
+// de la maquette anglaise : « Déf. Spé. » contre « SDEF ».
+const LABEL_WIDTH = 64;
+const VALUE_WIDTH = 30;
 const BAR_HEIGHT = 4;
 const TRACK_OPACITY = 0.2;
 

@@ -245,13 +245,17 @@ export default function PokemonDetail() {
           />
         </Pressable>
 
-        <Animated.Image
-          source={{ uri: getArtworkUrl(pokemon.id) }}
-          style={[styles.artwork, artworkStyle]}
-          resizeMode="contain"
-          accessible={false}
-          importantForAccessibility="no"
-        />
+        {/* L'artwork vit dans un emplacement qui couvre la rangée : centré en
+            absolu il se collerait à gauche, et il masquerait les flèches. */}
+        <View style={styles.artworkSlot} pointerEvents="none">
+          <Animated.Image
+            source={{ uri: getArtworkUrl(pokemon.id) }}
+            style={[styles.artwork, artworkStyle]}
+            resizeMode="contain"
+            accessible={false}
+            importantForAccessibility="no"
+          />
+        </View>
       </View>
 
       <View style={[styles.card, { backgroundColor: theme.surface }]}>
@@ -271,6 +275,8 @@ export default function PokemonDetail() {
                   name="monitor-weight"
                   size={iconSize.sm}
                   color={theme.textPrimary}
+                  accessibilityElementsHidden
+                  importantForAccessibility="no-hide-descendants"
                 />
                 <Text style={[styles.attributeValue, { color: theme.textPrimary }]}>
                   {formatDecimal(toKilograms(pokemon.weightHg), i18n.language)} {t("detail.weightUnit")}
@@ -285,7 +291,13 @@ export default function PokemonDetail() {
 
             <View style={styles.attribute}>
               <View style={styles.attributeValueRow}>
-                <MaterialIcons name="straighten" size={iconSize.sm} color={theme.textPrimary} />
+                <MaterialIcons
+                  name="straighten"
+                  size={iconSize.sm}
+                  color={theme.textPrimary}
+                  accessibilityElementsHidden
+                  importantForAccessibility="no-hide-descendants"
+                />
                 <Text style={[styles.attributeValue, { color: theme.textPrimary }]}>
                   {formatDecimal(toMeters(pokemon.heightDm), i18n.language)} {t("detail.heightUnit")}
                 </Text>
@@ -302,7 +314,7 @@ export default function PokemonDetail() {
                 {pokemon.abilities.map((ability) => (
                   <Text
                     key={ability}
-                    style={[styles.attributeValue, { color: theme.textPrimary }]}
+                    style={[styles.attributeValue, styles.abilityValue, { color: theme.textPrimary }]}
                   >
                     {ability}
                   </Text>
@@ -390,10 +402,14 @@ const styles = StyleSheet.create({
   disabled: {
     opacity: 0.3,
   },
-  artwork: {
+  artworkSlot: {
     position: "absolute",
-    alignSelf: "center",
     top: 0,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  artwork: {
     width: ARTWORK_SIZE,
     height: ARTWORK_SIZE,
   },
@@ -434,6 +450,10 @@ const styles = StyleSheet.create({
   },
   attributeValue: {
     ...typography.body3,
+  },
+  // Seuls les talents viennent de l'API en minuscules ; une unité SI ne prend
+  // jamais de majuscule, d'où la distinction.
+  abilityValue: {
     textTransform: "capitalize",
   },
   abilities: {
