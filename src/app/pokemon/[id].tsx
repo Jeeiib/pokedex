@@ -44,9 +44,9 @@ export default function PokemonDetail() {
 
   // Le type du slot 1 donne la couleur de toute la fiche.
   const accent = getTypeColors(pokemon?.types[0] ?? "normal");
-  // Le rouge (et les autres teintes foncees) du type ne donne que 2,49 de
-  // contraste sur la surface sombre : les titres de section basculent sur le
-  // texte du theme en mode sombre, les aplats de type restent inchanges.
+  // Une teinte de type foncée ne donne que 2,49 de contraste sur la surface
+  // sombre : les titres de section passent au texte du thème, les aplats de
+  // type restent inchangés.
   const sectionColor = scheme === "dark" ? theme.textPrimary : accent.background;
 
   // Navigation conditionnelle : on vérifie la borne avant de bouger, d'où la

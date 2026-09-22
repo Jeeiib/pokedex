@@ -11,9 +11,8 @@ const STORAGE_KEY = "pokedex.themeMode";
 type ThemeContextValue = {
   theme: Theme;
   mode: ThemeMode;
-  resolved: "light" | "dark";
-  // Schema resolu (systeme compris) : les composants qui doivent adapter une
-  // couleur au mode sombre sans passer par les jetons du theme lisent ce champ.
+  // Schéma effectivement appliqué, réglage système résolu compris : les
+  // composants qui adaptent une couleur sans passer par un jeton le lisent.
   scheme: "light" | "dark";
   setMode: (mode: ThemeMode) => void;
 };
@@ -21,7 +20,6 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue>({
   theme: lightTheme,
   mode: "system",
-  resolved: "light",
   scheme: "light",
   setMode: () => {},
 });
@@ -34,8 +32,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const systemScheme = useColorScheme();
   const [mode, setModeState] = useState<ThemeMode>("system");
 
-  // Le mode stocke est applique des sa lecture. Le rendu ne l'attend pas :
-  // l'ecran de demarrage couvre encore ces quelques millisecondes.
+  // Le mode stocké est appliqué dès sa lecture. Le rendu ne l'attend pas :
+  // l'écran de démarrage couvre encore ces quelques millisecondes.
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY).then((stored) => {
       if (isMode(stored)) {
@@ -51,11 +49,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   // useColorScheme peut renvoyer "unspecified" (RN recent) en plus de null :
   // seul "dark" bascule le theme, tout le reste retombe sur le clair.
-  const resolved = mode === "system" ? (systemScheme === "dark" ? "dark" : "light") : mode;
-  const theme = resolved === "dark" ? darkTheme : lightTheme;
+  const scheme = mode === "system" ? (systemScheme === "dark" ? "dark" : "light") : mode;
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
 
   return (
-    <ThemeContext.Provider value={{ theme, mode, resolved, scheme: resolved, setMode }}>
+    <ThemeContext.Provider value={{ theme, mode, scheme, setMode }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -17,6 +17,9 @@ const resources = {
 
 const deviceLanguage = getLocales()[0]?.languageCode ?? "fr";
 
+// Faux positif du plugin sur l'export par défaut d'i18next, qui porte aussi
+// un export nommé `use`.
+// eslint-disable-next-line import/no-named-as-default-member
 i18n.use(initReactI18next).init({
   resources,
   lng: deviceLanguage in resources ? deviceLanguage : "fr",
@@ -24,22 +27,22 @@ i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 });
 
-// Un choix explicite prime sur la langue du telephone, y compris apres
-// redemarrage.
+// Un choix explicite prime sur la langue du téléphone, y compris après
+// redémarrage.
 AsyncStorage.getItem(STORAGE_KEY).then((stored) => {
   if (stored === "fr" || stored === "en") {
-    // eslint-disable-next-line import/no-named-as-default-member -- meme faux positif que le i18n.use plus haut
+    // eslint-disable-next-line import/no-named-as-default-member -- même faux positif que le i18n.use plus haut
     i18n.changeLanguage(stored);
   }
 });
 
 export async function setAppLanguage(language: AppLanguage): Promise<void> {
-  // eslint-disable-next-line import/no-named-as-default-member -- meme faux positif que le i18n.use plus haut
+  // eslint-disable-next-line import/no-named-as-default-member -- même faux positif que le i18n.use plus haut
   await i18n.changeLanguage(language);
   await AsyncStorage.setItem(STORAGE_KEY, language);
 }
 
-// Etiquette de langue a passer a accessibilityLanguage, suit la langue active.
+// Étiquette de langue à passer à accessibilityLanguage, suit la langue active.
 export function useA11yLanguage(): string {
   const { i18n: instance } = useTranslation();
   return toA11yLanguage(instance.language);
