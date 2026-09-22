@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import CryButton from "@/components/CryButton";
 import ErrorMessage from "@/components/ErrorMessage";
+import FavoriteButton from "@/components/FavoriteButton";
 import Loader from "@/components/Loader";
 import Pokeball from "@/components/Pokeball";
 import StatBar from "@/components/StatBar";
@@ -134,6 +135,7 @@ export default function PokemonDetail() {
             name={species.name}
             color={accent.foreground}
           />
+          <FavoriteButton id={pokemon.id} name={species.name} color={accent.foreground} />
           <Text style={[styles.number, { color: accent.foreground }]}>
             {formatPokemonId(pokemon.id)}
           </Text>
