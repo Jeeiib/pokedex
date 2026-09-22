@@ -2,7 +2,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, TextInput, View } from "react-native";
 
-import { iconSize, spacing, typography } from "@/constants/theme";
+import { iconSize, spacing, TOUCH_TARGET, typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { useA11yLanguage } from "@/i18n";
 
@@ -44,14 +44,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-    height: 32,
-    borderRadius: 16,
+    height: TOUCH_TARGET,
+    borderRadius: TOUCH_TARGET / 2,
     paddingLeft: 12,
     paddingRight: spacing.md,
   },
   input: {
-    ...typography.body3,
+    ...typography.body1,
     flex: 1,
+    // Le champ occupe toute la hauteur : viser la pilule suffit, sans avoir à
+    // toucher précisément la ligne de texte.
+    alignSelf: "stretch",
     padding: 0,
   },
 });

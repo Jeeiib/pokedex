@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { AccessibilityInfo, Pressable, StyleSheet, Text } from "react-native";
 
 import type { AppLanguage } from "@/constants/a11y";
-import { typography } from "@/constants/theme";
+import { touchArea, typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { setAppLanguage, useA11yLanguage } from "@/i18n";
 
@@ -20,8 +20,8 @@ export default function LanguageToggle() {
 
   return (
     <Pressable
+      style={touchArea}
       onPress={toggle}
-      hitSlop={12}
       accessibilityRole="button"
       accessibilityLabel={t("language.action")}
       accessibilityValue={{ text: current.toUpperCase() }}

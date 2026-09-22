@@ -69,20 +69,32 @@ export const elevation = {
   },
 } as const;
 
-// Tailles d'icônes du Figma : 16 dans les contrôles, 20 pour les réglages du
-// bandeau, 24 dans la fiche, 32 pour le retour.
+// Tailles d'icônes. La maquette descendait à 16 dans les contrôles, trop peu
+// pour être visé au doigt une fois la cible portée à 44.
 export const iconSize = {
-  sm: 16,
-  md: 20,
+  sm: 20,
+  md: 22,
   lg: 24,
   xl: 32,
 } as const;
 
+// Taille minimale d'une cible tactile selon les guidelines Apple. La maquette
+// dessinait des pastilles de 32, mesurées trop petites à l'usage.
+export const TOUCH_TARGET = 44;
+
 // Pastille ronde des contrôles de la liste : filtre, favoris, tri.
 export const circleButton = {
-  width: 32,
-  height: 32,
-  borderRadius: 16,
+  width: TOUCH_TARGET,
+  height: TOUCH_TARGET,
+  borderRadius: TOUCH_TARGET / 2,
+  alignItems: "center",
+  justifyContent: "center",
+} as const;
+
+// Zone tactile carrée pour un bouton sans fond, comme les réglages du bandeau.
+export const touchArea = {
+  minWidth: TOUCH_TARGET,
+  minHeight: TOUCH_TARGET,
   alignItems: "center",
   justifyContent: "center",
 } as const;

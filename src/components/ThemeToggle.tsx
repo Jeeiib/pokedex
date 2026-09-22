@@ -2,7 +2,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import { AccessibilityInfo, Pressable } from "react-native";
 
-import { iconSize } from "@/constants/theme";
+import { iconSize, touchArea } from "@/constants/theme";
 import { useTheme, type ThemeMode } from "@/contexts/ThemeProvider";
 import { useA11yLanguage } from "@/i18n";
 
@@ -29,8 +29,8 @@ export default function ThemeToggle() {
 
   return (
     <Pressable
+      style={touchArea}
       onPress={cycle}
-      hitSlop={12}
       accessibilityRole="button"
       accessibilityLabel={t("theme.action")}
       accessibilityValue={{ text: t(`theme.${mode}`) }}

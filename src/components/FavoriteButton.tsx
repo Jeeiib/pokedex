@@ -12,7 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { MOTION } from "@/constants/motion";
-import { iconSize } from "@/constants/theme";
+import { iconSize, touchArea } from "@/constants/theme";
 import { useFavorites } from "@/contexts/FavoritesProvider";
 import { useA11yLanguage } from "@/i18n";
 
@@ -60,8 +60,8 @@ export default function FavoriteButton({ id, name, color }: FavoriteButtonProps)
 
   return (
     <Pressable
+      style={touchArea}
       onPress={press}
-      hitSlop={12}
       accessibilityRole="button"
       accessibilityState={{ selected: active }}
       accessibilityLabel={active ? t("favorites.remove", { name }) : t("favorites.add", { name })}

@@ -24,7 +24,7 @@ import TypeBadge from "@/components/TypeBadge";
 import { MOTION } from "@/constants/motion";
 import { FIRST_SPECIES, LAST_SPECIES } from "@/constants/pokedex";
 import { getTypeColors } from "@/constants/pokemonTypes";
-import { iconSize, spacing, typography } from "@/constants/theme";
+import { iconSize, spacing, touchArea, typography } from "@/constants/theme";
 import { useBoot } from "@/contexts/BootProvider";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { usePokemonDetail } from "@/hooks/usePokemonDetail";
@@ -177,8 +177,8 @@ export default function PokemonDetail() {
       <SafeAreaView edges={["top"]}>
         <View style={styles.title}>
           <Pressable
+            style={touchArea}
             onPress={goBack}
-            hitSlop={8}
             accessibilityRole="button"
             accessibilityLabel={t("detail.back")}
             accessibilityLanguage={a11yLanguage}
@@ -214,9 +214,9 @@ export default function PokemonDetail() {
 
       <View style={styles.imageRow}>
         <Pressable
+          style={touchArea}
           onPress={() => goToNeighbour(-1)}
           disabled={!canGoPrevious}
-          hitSlop={12}
           accessibilityRole="button"
           accessibilityLabel={t("detail.previous")}
           accessibilityLanguage={a11yLanguage}
@@ -230,9 +230,9 @@ export default function PokemonDetail() {
         </Pressable>
 
         <Pressable
+          style={touchArea}
           onPress={() => goToNeighbour(1)}
           disabled={!canGoNext}
-          hitSlop={12}
           accessibilityRole="button"
           accessibilityLabel={t("detail.next")}
           accessibilityLanguage={a11yLanguage}

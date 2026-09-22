@@ -51,20 +51,18 @@ export default function SortMenu({ mode, onChange }: SortMenuProps) {
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-        <Pressable
-          style={[styles.backdrop, { backgroundColor: theme.scrim }]}
-          onPress={() => setOpen(false)}
-          accessibilityRole="button"
-          accessibilityLabel={t("state.close")}
-          accessibilityLanguage={a11yLanguage}
-        >
-          {/* Absorbe l'appui : sans lui, toucher la carte remonte au voile et
-              la referme sans rien choisir. */}
+        {/* Le voile est un frère de la carte, jamais son parent : un Pressable
+            parent groupe tout son contenu en un seul élément et le rend
+            inatteignable au lecteur d'écran. */}
+        <View style={styles.container} accessibilityViewIsModal>
           <Pressable
-            style={[styles.card, elevation.high, { backgroundColor: theme.primary }]}
-            onPress={() => {}}
-            accessible={false}
-          >
+            style={[styles.backdrop, { backgroundColor: theme.scrim }]}
+            onPress={() => setOpen(false)}
+            accessibilityRole="button"
+            accessibilityLabel={t("state.close")}
+            accessibilityLanguage={a11yLanguage}
+          />
+          <View style={[styles.card, elevation.high, { backgroundColor: theme.primary }]}>
             <View style={styles.cardTitle}>
               <Text
                 style={[styles.cardTitleLabel, { color: theme.onPrimary }]}
@@ -97,19 +95,26 @@ export default function SortMenu({ mode, onChange }: SortMenuProps) {
                 </Pressable>
               ))}
             </View>
-          </Pressable>
-        </Pressable>
+          </View>
+        </View>
       </Modal>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
+  container: {
     flex: 1,
     alignItems: "flex-end",
     paddingTop: 104,
     paddingRight: spacing.md,
+  },
+  backdrop: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
   },
   card: {
     borderRadius: 12,

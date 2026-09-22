@@ -1,7 +1,7 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Modal, Pressable, ScrollView, StyleSheet, Text } from "react-native";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { getTypeColors } from "@/constants/pokemonTypes";
 import { circleButton, elevation, iconSize, spacing, typography } from "@/constants/theme";
@@ -48,20 +48,18 @@ export default function TypeFilterModal({ types, selected, onSelect }: TypeFilte
       </Pressable>
 
       <Modal visible={open} transparent animationType="slide" onRequestClose={() => setOpen(false)}>
-        <Pressable
-          style={[styles.backdrop, { backgroundColor: theme.scrim }]}
-          onPress={() => setOpen(false)}
-          accessibilityRole="button"
-          accessibilityLabel={t("state.close")}
-          accessibilityLanguage={a11yLanguage}
-        >
-          {/* Absorbe l'appui : sans lui, toucher la feuille remonte au voile
-              et la referme sans rien choisir. */}
+        {/* Le voile est un frère de la feuille, jamais son parent : un Pressable
+            parent groupe tout son contenu en un seul élément et le rend
+            inatteignable au lecteur d'écran. */}
+        <View style={styles.container} accessibilityViewIsModal>
           <Pressable
-            style={[styles.sheet, elevation.high, { backgroundColor: theme.surface }]}
-            onPress={() => {}}
-            accessible={false}
-          >
+            style={[styles.backdrop, { backgroundColor: theme.scrim }]}
+            onPress={() => setOpen(false)}
+            accessibilityRole="button"
+            accessibilityLabel={t("state.close")}
+            accessibilityLanguage={a11yLanguage}
+          />
+          <View style={[styles.sheet, elevation.high, { backgroundColor: theme.surface }]}>
             <Text
               style={[styles.sheetTitle, { color: theme.textPrimary }]}
               accessibilityRole="header"
@@ -110,17 +108,24 @@ export default function TypeFilterModal({ types, selected, onSelect }: TypeFilte
                 );
               })}
             </ScrollView>
-          </Pressable>
-        </Pressable>
+          </View>
+        </View>
       </Modal>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
+  container: {
     flex: 1,
     justifyContent: "flex-end",
+  },
+  backdrop: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
   },
   sheet: {
     borderTopLeftRadius: 16,

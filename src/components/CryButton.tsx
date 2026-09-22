@@ -3,7 +3,7 @@ import { useAudioPlayer } from "expo-audio";
 import { useTranslation } from "react-i18next";
 import { Pressable } from "react-native";
 
-import { iconSize } from "@/constants/theme";
+import { iconSize, touchArea } from "@/constants/theme";
 import { useA11yLanguage } from "@/i18n";
 import { resolveCryUrl } from "@/utils/cryUrl";
 
@@ -35,8 +35,8 @@ export default function CryButton({ slug, officialUrl, name, color, onPlay }: Cr
 
   return (
     <Pressable
+      style={touchArea}
       onPress={play}
-      hitSlop={12}
       disabled={url === null}
       accessibilityRole="button"
       accessibilityLabel={t("detail.playCry", { name })}
