@@ -1,5 +1,4 @@
-// Palette claire : valeurs du Figma. La palette sombre arrive à la tâche 16,
-// elle est dérivée puis vérifiée au contraste.
+// Palette claire : valeurs du Figma.
 export const lightTheme = {
   background: "#EFEFEF",
   surface: "#FFFFFF",
@@ -14,6 +13,22 @@ export const lightTheme = {
 };
 
 export type Theme = typeof lightTheme;
+
+// Palette sombre : le rouge d'identité reste le rouge du Figma sur les fonds,
+// seul le rouge de texte est éclairci. Contrastes mesurés sur surface :
+// textPrimary 15,29 / textSecondary 7,01 / primaryText 5,18.
+export const darkTheme: Theme = {
+  background: "#121212",
+  surface: "#1E1E1E",
+  textPrimary: "#F5F5F5",
+  textSecondary: "#A8A8A8",
+  border: "#4A4A4A",
+  primary: "#DC0A2D",
+  onPrimary: "#FFFFFF",
+  // Le rouge du Figma ne donne que 3,27 sur la surface sombre, d'où ce rouge
+  // clairci réservé au texte.
+  primaryText: "#FF4D6A",
+};
 
 export const fonts = {
   regular: "Poppins_400Regular",
