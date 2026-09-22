@@ -13,9 +13,10 @@ type CryButtonProps = {
   officialUrl: string | null;
   name: string;
   color: string;
+  onPlay?: () => void;
 };
 
-export default function CryButton({ slug, officialUrl, name, color }: CryButtonProps) {
+export default function CryButton({ slug, officialUrl, name, color, onPlay }: CryButtonProps) {
   const { t } = useTranslation();
   const a11yLanguage = useA11yLanguage();
   const url = resolveCryUrl(slug, officialUrl);
@@ -29,6 +30,7 @@ export default function CryButton({ slug, officialUrl, name, color }: CryButtonP
     // Un fichier absent laisse le lecteur inerte, la fiche continue de vivre.
     player.seekTo(0);
     player.play();
+    onPlay?.();
   }
 
   return (

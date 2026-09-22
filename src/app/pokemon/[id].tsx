@@ -1,7 +1,16 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import Animated, {
+  ReduceMotion,
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import CryButton from "@/components/CryButton";
@@ -11,6 +20,7 @@ import Loader from "@/components/Loader";
 import Pokeball from "@/components/Pokeball";
 import StatBar from "@/components/StatBar";
 import TypeBadge from "@/components/TypeBadge";
+import { MOTION } from "@/constants/motion";
 import { getTypeColors } from "@/constants/pokemonTypes";
 import { spacing, typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
@@ -42,6 +52,45 @@ export default function PokemonDetail() {
   const { theme, scheme } = useTheme();
   const a11yLanguage = useA11yLanguage();
   const { pokemon, species, loading, error, reload } = usePokemonDetail(id);
+
+  // Deux mouvements qui s'additionnent : l'arrivée de l'artwork et le rebond
+  // du cri. Les séparer garde chaque valeur partagée dans un seul effet.
+  const artworkLift = useSharedValue<number>(MOTION.artwork.offset);
+  const artworkScale = useSharedValue<number>(0.9);
+  const cryBounce = useSharedValue<number>(0);
+  const [cryCount, setCryCount] = useState(0);
+
+  // L'artwork arrive quand les données sont là, pas au montage de l'écran.
+  useEffect(() => {
+    if (!pokemon) {
+      return;
+    }
+    artworkLift.value = withSpring(0, { ...MOTION.spring, reduceMotion: ReduceMotion.System });
+    artworkScale.value = withSpring(1, { ...MOTION.spring, reduceMotion: ReduceMotion.System });
+  }, [pokemon, artworkLift, artworkScale]);
+
+  // Un bond court accompagne le cri : le geste produit un effet visible. Le
+  // compteur sert de déclencheur, le compilateur React interdisant de toucher
+  // une valeur partagée ailleurs que dans un effet.
+  useEffect(() => {
+    if (cryCount === 0) {
+      return;
+    }
+    cryBounce.value = withSequence(
+      withTiming(-MOTION.cry.offset, {
+        duration: MOTION.cry.duration / 2,
+        reduceMotion: ReduceMotion.System,
+      }),
+      withSpring(0, { ...MOTION.spring, reduceMotion: ReduceMotion.System })
+    );
+  }, [cryCount, cryBounce]);
+
+  const artworkStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: artworkLift.value + cryBounce.value },
+      { scale: artworkScale.value },
+    ],
+  }));
 
   // Le type du slot 1 donne la couleur de toute la fiche.
   const accent = getTypeColors(pokemon?.types[0] ?? "normal");
@@ -134,6 +183,7 @@ export default function PokemonDetail() {
             officialUrl={pokemon.cryUrl}
             name={species.name}
             color={accent.foreground}
+            onPlay={() => setCryCount((current) => current + 1)}
           />
           <FavoriteButton id={pokemon.id} name={species.name} color={accent.foreground} />
           <Text style={[styles.number, { color: accent.foreground }]}>
@@ -175,9 +225,9 @@ export default function PokemonDetail() {
           />
         </Pressable>
 
-        <Image
+        <Animated.Image
           source={{ uri: getArtworkUrl(pokemon.id) }}
-          style={styles.artwork}
+          style={[styles.artwork, artworkStyle]}
           resizeMode="contain"
           accessible={false}
           importantForAccessibility="no"
@@ -187,8 +237,8 @@ export default function PokemonDetail() {
       <View style={[styles.card, { backgroundColor: theme.surface }]}>
         <ScrollView contentContainerStyle={styles.cardContent} showsVerticalScrollIndicator={false}>
           <View style={styles.types}>
-            {pokemon.types.map((slug) => (
-              <TypeBadge key={slug} slug={slug} label={t(`types.${slug}`)} />
+            {pokemon.types.map((slug, index) => (
+              <TypeBadge key={slug} slug={slug} label={t(`types.${slug}`)} index={index} />
             ))}
           </View>
 
