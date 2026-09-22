@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import AnimatedSplash from "@/components/AnimatedSplash";
 import { MOTION } from "@/constants/motion";
 import { BootProvider } from "@/contexts/BootProvider";
+import { FavoritesProvider } from "@/contexts/FavoritesProvider";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
 import "@/i18n";
 
@@ -33,11 +34,13 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <BootProvider>
-        <StatusBar style="light" />
-        <Stack screenOptions={{ headerShown: false }} />
-        <AnimatedSplash />
-      </BootProvider>
+      <FavoritesProvider>
+        <BootProvider>
+          <StatusBar style="light" />
+          <Stack screenOptions={{ headerShown: false }} />
+          <AnimatedSplash />
+        </BootProvider>
+      </FavoritesProvider>
     </ThemeProvider>
   );
 }

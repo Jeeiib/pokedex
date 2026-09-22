@@ -1,7 +1,8 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AccessibilityInfo, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { AccessibilityInfo, Pressable, StyleSheet, Text, View } from "react-native";
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import ErrorMessage from "@/components/ErrorMessage";
@@ -14,6 +15,7 @@ import SortMenu from "@/components/SortMenu";
 import ThemeToggle from "@/components/ThemeToggle";
 import TypeFilterModal from "@/components/TypeFilterModal";
 import { spacing, typography } from "@/constants/theme";
+import { useBoot } from "@/contexts/BootProvider";
 import { useFavorites } from "@/contexts/FavoritesProvider";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { usePokemonIndex } from "@/hooks/usePokemonIndex";
@@ -27,7 +29,8 @@ import { filterByIds, searchPokemons, sortPokemons } from "@/utils/pokemonList";
 const SURFACE_INSET = 4;
 const LIST_PADDING = 12;
 const COLUMNS = 3;
-const ICON_FAVORITES = 20;
+const CIRCLE_SIZE = 32;
+const ICON_FAVORITES = 16;
 
 export default function Index() {
   const { t } = useTranslation();
@@ -36,6 +39,12 @@ export default function Index() {
   const { data, loading, error, reload } = usePokemonIndex();
   const { types, selected, ids, select } = useTypeFilter();
   const { favorites } = useFavorites();
+  const { markDataReady } = useBoot();
+
+  const scrollY = useSharedValue(0);
+  const onScroll = useAnimatedScrollHandler((event) => {
+    scrollY.value = event.contentOffset.y;
+  });
 
   const [query, setQuery] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("number");
@@ -57,16 +66,32 @@ export default function Index() {
     AccessibilityInfo.announceForAccessibility(t("list.results", { count: visible.length }));
   }, [query, visible.length, t]);
 
+  // L'ouverture attend les données, ou la première erreur : rien ne doit rester
+  // coincé derrière l'écran de démarrage.
+  useEffect(() => {
+    if (!loading) {
+      markDataReady();
+    }
+  }, [loading, markDataReady]);
+
   return (
     <View style={[styles.screen, { backgroundColor: theme.primary }]}>
       <SafeAreaView edges={["top"]}>
-        <PokedexHeader>
+        <PokedexHeader
+          scrollY={scrollY}
+          actions={
+            <>
+              <LanguageToggle />
+              <ThemeToggle />
+            </>
+          }
+        >
           <View style={styles.controls}>
             <SearchBar value={query} onChangeText={setQuery} />
             <TypeFilterModal types={types} selected={selected} onSelect={select} />
             <Pressable
+              style={[styles.circle, { backgroundColor: theme.surface }]}
               onPress={() => setFavoritesOnly((current) => !current)}
-              hitSlop={12}
               accessibilityRole="button"
               accessibilityState={{ selected: favoritesOnly }}
               accessibilityLabel={t("list.favoritesOnly")}
@@ -75,12 +100,10 @@ export default function Index() {
               <MaterialIcons
                 name={favoritesOnly ? "favorite" : "favorite-border"}
                 size={ICON_FAVORITES}
-                color={theme.onPrimary}
+                color={theme.primaryText}
               />
             </Pressable>
             <SortMenu mode={sortMode} onChange={setSortMode} />
-            <LanguageToggle />
-            <ThemeToggle />
           </View>
         </PokedexHeader>
       </SafeAreaView>
@@ -91,7 +114,7 @@ export default function Index() {
         {!loading && error ? <ErrorMessage message={t("state.error")} onRetry={reload} /> : null}
 
         {!loading && !error ? (
-          <FlatList
+          <Animated.FlatList
             data={visible}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => <PokemonCard id={item.id} name={item.name} />}
@@ -100,6 +123,8 @@ export default function Index() {
             contentContainerStyle={styles.list}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
+            onScroll={onScroll}
+            scrollEventThrottle={16}
             ListEmptyComponent={
               <Text style={[styles.empty, { color: theme.textSecondary }]}>{t("list.empty")}</Text>
             }
@@ -113,6 +138,13 @@ export default function Index() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+  },
+  circle: {
+    width: CIRCLE_SIZE,
+    height: CIRCLE_SIZE,
+    borderRadius: CIRCLE_SIZE / 2,
+    alignItems: "center",
+    justifyContent: "center",
   },
   controls: {
     flexDirection: "row",
