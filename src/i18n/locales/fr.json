@@ -1,0 +1,60 @@
+{
+  "app": {
+    "title": "Pokédex"
+  },
+  "list": {
+    "searchPlaceholder": "Rechercher un Pokémon",
+    "empty": "Aucun Pokémon ne correspond",
+    "results_one": "{{count}} Pokémon trouvé",
+    "results_other": "{{count}} Pokémon trouvés",
+    "sortTitle": "Trier par",
+    "sortByNumber": "Numéro",
+    "sortByName": "Nom",
+    "sortAction": "Changer le tri",
+    "filterTitle": "Filtrer par type",
+    "filterAction": "Filtrer par type",
+    "filterClear": "Tous les types",
+    "favoritesOnly": "Favoris uniquement"
+  },
+  "detail": {
+    "back": "Retour à la liste",
+    "about": "À propos",
+    "weight": "Poids",
+    "height": "Taille",
+    "abilities": "Talents",
+    "baseStats": "Statistiques de base",
+    "playCry": "Écouter le cri de {{name}}"
+  },
+  "stats": {
+    "hp": "PV",
+    "attack": "Attaque",
+    "defense": "Défense",
+    "special-attack": "Atq. Spé.",
+    "special-defense": "Déf. Spé.",
+    "speed": "Vitesse"
+  },
+  "state": {
+    "loading": "Chargement",
+    "error": "Le chargement a échoué",
+    "retry": "Réessayer",
+    "notFound": "Ce Pokémon n'existe pas"
+  },
+  "theme": {
+    "action": "Changer de thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système",
+    "announceLight": "Thème clair activé",
+    "announceDark": "Thème sombre activé"
+  },
+  "favorites": {
+    "add": "Ajouter {{name}} aux favoris",
+    "remove": "Retirer {{name}} des favoris",
+    "announceAdded": "{{name}} ajouté aux favoris",
+    "announceRemoved": "{{name}} retiré des favoris"
+  },
+  "language": {
+    "action": "Changer de langue",
+    "announce": "Langue changée"
+  }
+}
