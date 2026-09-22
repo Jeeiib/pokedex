@@ -24,14 +24,14 @@ export default function PokemonCard({ id, name }: PokemonCardProps) {
   const a11yLanguage = useA11yLanguage();
 
   return (
-    <Link href={`/pokemon/${id}`} asChild>
+    <Link href={{ pathname: "/pokemon/[id]", params: { id: String(id) } }} asChild>
       <Pressable
-        style={styles.pressable}
+        style={[styles.pressable, elevation.low, { backgroundColor: theme.surface }]}
         accessibilityRole="link"
         accessibilityLabel={`${name}, ${formatPokemonId(id)}`}
         accessibilityLanguage={a11yLanguage}
       >
-        <View style={[styles.card, elevation.low, { backgroundColor: theme.surface }]}>
+        <View style={styles.card}>
           <View style={styles.numberRow}>
             <Text style={[styles.number, { color: theme.textSecondary }]}>
               {formatPokemonId(id)}
@@ -63,11 +63,15 @@ export default function PokemonCard({ id, name }: PokemonCardProps) {
 }
 
 const styles = StyleSheet.create({
+  // L'ombre vit sur le conteneur extérieur : sur iOS, `overflow: hidden`
+  // rogne l'ombre du même élément et la fait disparaître.
   pressable: {
     flex: 1,
+    height: CARD_HEIGHT,
+    borderRadius: 8,
   },
   card: {
-    height: CARD_HEIGHT,
+    flex: 1,
     borderRadius: 8,
     justifyContent: "space-between",
     overflow: "hidden",
