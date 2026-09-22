@@ -52,8 +52,20 @@ export default function SortMenu({ mode, onChange }: SortMenuProps) {
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-        <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
-          <View style={[styles.card, elevation.high, { backgroundColor: theme.primary }]}>
+        <Pressable
+          style={[styles.backdrop, { backgroundColor: theme.scrim }]}
+          onPress={() => setOpen(false)}
+          accessibilityRole="button"
+          accessibilityLabel={t("state.close")}
+          accessibilityLanguage={a11yLanguage}
+        >
+          {/* Absorbe l'appui : sans lui, toucher la carte remonte au voile et
+              la referme sans rien choisir. */}
+          <Pressable
+            style={[styles.card, elevation.high, { backgroundColor: theme.primary }]}
+            onPress={() => {}}
+            accessible={false}
+          >
             <View style={styles.cardTitle}>
               <Text
                 style={[styles.cardTitleLabel, { color: theme.onPrimary }]}
@@ -86,7 +98,7 @@ export default function SortMenu({ mode, onChange }: SortMenuProps) {
                 </Pressable>
               ))}
             </View>
-          </View>
+          </Pressable>
         </Pressable>
       </Modal>
     </>
@@ -103,7 +115,6 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
     alignItems: "flex-end",
     paddingTop: 104,
     paddingRight: spacing.md,

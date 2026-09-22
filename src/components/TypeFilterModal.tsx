@@ -1,7 +1,7 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, ScrollView, StyleSheet, Text } from "react-native";
 
 import { getTypeColors } from "@/constants/pokemonTypes";
 import { elevation, spacing, typography } from "@/constants/theme";
@@ -49,8 +49,20 @@ export default function TypeFilterModal({ types, selected, onSelect }: TypeFilte
       </Pressable>
 
       <Modal visible={open} transparent animationType="slide" onRequestClose={() => setOpen(false)}>
-        <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
-          <View style={[styles.sheet, elevation.high, { backgroundColor: theme.surface }]}>
+        <Pressable
+          style={[styles.backdrop, { backgroundColor: theme.scrim }]}
+          onPress={() => setOpen(false)}
+          accessibilityRole="button"
+          accessibilityLabel={t("state.close")}
+          accessibilityLanguage={a11yLanguage}
+        >
+          {/* Absorbe l'appui : sans lui, toucher la feuille remonte au voile
+              et la referme sans rien choisir. */}
+          <Pressable
+            style={[styles.sheet, elevation.high, { backgroundColor: theme.surface }]}
+            onPress={() => {}}
+            accessible={false}
+          >
             <Text
               style={[styles.sheetTitle, { color: theme.textPrimary }]}
               accessibilityRole="header"
@@ -99,7 +111,7 @@ export default function TypeFilterModal({ types, selected, onSelect }: TypeFilte
                 );
               })}
             </ScrollView>
-          </View>
+          </Pressable>
         </Pressable>
       </Modal>
     </>
@@ -116,7 +128,6 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
     justifyContent: "flex-end",
   },
   sheet: {

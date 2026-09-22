@@ -1,5 +1,6 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useLocalSearchParams } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -21,12 +22,14 @@ import Pokeball from "@/components/Pokeball";
 import StatBar from "@/components/StatBar";
 import TypeBadge from "@/components/TypeBadge";
 import { MOTION } from "@/constants/motion";
+import { FIRST_SPECIES, LAST_SPECIES } from "@/constants/pokedex";
 import { getTypeColors } from "@/constants/pokemonTypes";
 import { spacing, typography } from "@/constants/theme";
+import { useBoot } from "@/contexts/BootProvider";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { usePokemonDetail } from "@/hooks/usePokemonDetail";
 import { useA11yLanguage } from "@/i18n";
-import { getArtworkUrl } from "@/services/pokemonService";
+import { getArtworkUrl } from "@/utils/artworkUrl";
 import { formatDecimal, toKilograms, toMeters } from "@/utils/formatMeasures";
 import { formatPokemonId } from "@/utils/formatPokemonId";
 import { parsePokemonId } from "@/utils/parsePokemonId";
@@ -34,8 +37,6 @@ import { parsePokemonId } from "@/utils/parsePokemonId";
 // Mesures du fichier Figma : bandeau de 76, cadre d'image de 144 traversé par
 // un artwork de 200 qui déborde de 56 sur la carte, pokéball de 208 en
 // filigrane, carte arrondie à 8 avec 56 de padding haut.
-const FIRST_SPECIES = 1;
-const LAST_SPECIES = 1025;
 const ARTWORK_SIZE = 200;
 const IMAGE_ROW_HEIGHT = 144;
 const CARD_PADDING_TOP = 56;
@@ -52,6 +53,15 @@ export default function PokemonDetail() {
   const { theme, scheme } = useTheme();
   const a11yLanguage = useA11yLanguage();
   const { pokemon, species, loading, error, reload } = usePokemonDetail(id);
+  const { markDataReady } = useBoot();
+
+  // Une ouverture directe sur une fiche ne monte pas l'écran liste : c'est
+  // elle qui doit alors libérer l'écran de démarrage.
+  useEffect(() => {
+    if (!loading) {
+      markDataReady();
+    }
+  }, [loading, markDataReady]);
 
   // Deux mouvements qui s'additionnent : l'arrivée de l'artwork et le rebond
   // du cri. Les séparer garde chaque valeur partagée dans un seul effet.
@@ -65,6 +75,8 @@ export default function PokemonDetail() {
     if (!pokemon) {
       return;
     }
+    artworkLift.value = MOTION.artwork.offset;
+    artworkScale.value = 0.9;
     artworkLift.value = withSpring(0, { ...MOTION.spring, reduceMotion: ReduceMotion.System });
     artworkScale.value = withSpring(1, { ...MOTION.spring, reduceMotion: ReduceMotion.System });
   }, [pokemon, artworkLift, artworkScale]);
@@ -123,6 +135,7 @@ export default function PokemonDetail() {
   if (loading) {
     return (
       <SafeAreaView style={[styles.fallback, { backgroundColor: theme.background }]}>
+        <StatusBar style={scheme === "dark" ? "light" : "dark"} />
         <Loader />
       </SafeAreaView>
     );
@@ -131,6 +144,7 @@ export default function PokemonDetail() {
   if (error || !pokemon || !species) {
     return (
       <SafeAreaView style={[styles.fallback, { backgroundColor: theme.background }]}>
+        <StatusBar style={scheme === "dark" ? "light" : "dark"} />
         <ErrorMessage
           message={error === "notFound" ? t("state.notFound") : t("state.error")}
           onRetry={reload}
@@ -155,6 +169,10 @@ export default function PokemonDetail() {
 
   return (
     <View style={[styles.screen, { backgroundColor: accent.background }]}>
+      {/* Le haut de l'écran est peint par la couleur du type : la barre d'état
+          suit la couleur de texte que la table du type a validée. */}
+      <StatusBar style={accent.foreground === "#FFFFFF" ? "light" : "dark"} />
+
       <View style={styles.watermark} pointerEvents="none">
         <Pokeball size={WATERMARK_SIZE} color={accent.foreground} opacity={WATERMARK_OPACITY} />
       </View>
@@ -185,7 +203,12 @@ export default function PokemonDetail() {
             color={accent.foreground}
             onPlay={() => setCryCount((current) => current + 1)}
           />
-          <FavoriteButton id={pokemon.id} name={species.name} color={accent.foreground} />
+          <FavoriteButton
+            key={pokemon.id}
+            id={pokemon.id}
+            name={species.name}
+            color={accent.foreground}
+          />
           <Text style={[styles.number, { color: accent.foreground }]}>
             {formatPokemonId(pokemon.id)}
           </Text>
@@ -253,7 +276,7 @@ export default function PokemonDetail() {
                   color={theme.textPrimary}
                 />
                 <Text style={[styles.attributeValue, { color: theme.textPrimary }]}>
-                  {formatDecimal(toKilograms(pokemon.weightHg), i18n.language)} kg
+                  {formatDecimal(toKilograms(pokemon.weightHg), i18n.language)} {t("detail.weightUnit")}
                 </Text>
               </View>
               <Text style={[styles.attributeLabel, { color: theme.textSecondary }]}>
@@ -267,7 +290,7 @@ export default function PokemonDetail() {
               <View style={styles.attributeValueRow}>
                 <MaterialIcons name="straighten" size={ICON_MEASURE} color={theme.textPrimary} />
                 <Text style={[styles.attributeValue, { color: theme.textPrimary }]}>
-                  {formatDecimal(toMeters(pokemon.heightDm), i18n.language)} m
+                  {formatDecimal(toMeters(pokemon.heightDm), i18n.language)} {t("detail.heightUnit")}
                 </Text>
               </View>
               <Text style={[styles.attributeLabel, { color: theme.textSecondary }]}>

@@ -1,20 +1,9 @@
-import type {
-  Pokemon,
-  PokemonSpecies,
-  PokemonSummary,
-  PokemonTypeOption,
-} from "@/types/pokemon";
+import { LAST_SPECIES } from "@/constants/pokedex";
+import type { Pokemon, PokemonSpecies, PokemonSummary } from "@/types/pokemon";
 
 import { apiFetch, graphqlFetch } from "./api";
 
-// Les 1025 espèces numérotées du Pokédex. L'endpoint /pokemon en renvoie
-// environ 1302, dont des formes alternatives sans numéro propre.
-const SPECIES_COUNT = 1025;
-
 const LANGUAGE_IDS: Record<string, number> = { fr: 5, en: 9 };
-
-const ARTWORK_BASE =
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork";
 
 type NamedApiResource = { name: string; url: string };
 
@@ -30,7 +19,7 @@ function languageId(language: string): number {
 // Index de référence de la liste : identifiant et slug anglais.
 export async function getPokemonIndex(): Promise<PokemonSummary[]> {
   const payload = await apiFetch<{ results: NamedApiResource[] }>(
-    `/pokemon-species?limit=${SPECIES_COUNT}`
+    `/pokemon-species?limit=${LAST_SPECIES}`
   );
   return payload.results.map((entry) => {
     const id = idFromUrl(entry.url);
@@ -82,47 +71,26 @@ export async function getPokemonById(id: number): Promise<Pokemon> {
   };
 }
 
-// Espèce : nom traduit, catégorie et description dans la langue demandée.
 export async function getPokemonSpecies(id: number, language: string): Promise<PokemonSpecies> {
   const code = language.split("-")[0];
   const payload = await apiFetch<{
     id: number;
     names: { name: string; language: NamedApiResource }[];
-    genera: { genus: string; language: NamedApiResource }[];
     flavor_text_entries: { flavor_text: string; language: NamedApiResource }[];
   }>(`/pokemon-species/${id}`);
 
+  // PokeAPI trie ces tableaux par langue et le japonais y est en tête : un
+  // repli sur le premier venu afficherait des katakana. L'anglais d'abord.
   const pick = <T extends { language: NamedApiResource }>(entries: T[]) =>
-    entries.find((entry) => entry.language.name === code) ?? entries[0];
+    entries.find((entry) => entry.language.name === code) ??
+    entries.find((entry) => entry.language.name === "en") ??
+    entries[0];
 
   return {
     id: payload.id,
     name: pick(payload.names)?.name ?? "",
-    genus: pick(payload.genera)?.genus ?? "",
     description: pick(payload.flavor_text_entries)?.flavor_text ?? "",
   };
-}
-
-// Les types de la maquette, avec leur nom traduit. L'endpoint /type en
-// renvoie 21, dont trois qui n'apparaissent pas dans le jeu.
-export async function getTypes(
-  language: string,
-  allowed: string[]
-): Promise<PokemonTypeOption[]> {
-  const code = language.split("-")[0];
-  const list = await apiFetch<{ results: NamedApiResource[] }>("/type");
-  const kept = list.results.filter((entry) => allowed.includes(entry.name));
-  const details = await Promise.all(
-    kept.map((entry) =>
-      apiFetch<{ name: string; names: { name: string; language: NamedApiResource }[] }>(
-        `/type/${entry.name}`
-      )
-    )
-  );
-  return details.map((detail) => ({
-    slug: detail.name,
-    name: detail.names.find((entry) => entry.language.name === code)?.name ?? detail.name,
-  }));
 }
 
 // Identifiants des Pokémon d'un type, bornés aux espèces numérotées.
@@ -130,11 +98,5 @@ export async function getPokemonIdsByType(slug: string): Promise<number[]> {
   const payload = await apiFetch<{ pokemon: { pokemon: NamedApiResource }[] }>(`/type/${slug}`);
   return payload.pokemon
     .map((entry) => idFromUrl(entry.pokemon.url))
-    .filter((id) => id <= SPECIES_COUNT);
-}
-
-// Adresse du visuel officiel. Elle est déterministe, la lire dans la réponse
-// de détail coûterait une requête par espèce.
-export function getArtworkUrl(id: number): string {
-  return `${ARTWORK_BASE}/${id}.png`;
+    .filter((id) => id <= LAST_SPECIES);
 }

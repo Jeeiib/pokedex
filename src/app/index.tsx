@@ -50,12 +50,20 @@ export default function Index() {
   const [sortMode, setSortMode] = useState<SortMode>("number");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
 
-  // Le filtre favoris prend le pas sur le filtre par type : les deux ne
-  // sont pas censés s'intersecter dans l'interface.
+  // Les deux filtres se croisent : deux boutons allumés doivent tous les deux
+  // agir, sinon l'interface annonce un filtre qu'elle n'applique pas.
   const visible = useMemo(() => {
-    const scoped = favoritesOnly ? filterByIds(data, favorites) : filterByIds(data, ids);
+    const byType = filterByIds(data, ids);
+    const scoped = favoritesOnly ? filterByIds(byType, favorites) : byType;
     return sortPokemons(searchPokemons(scoped, query), sortMode);
   }, [data, favorites, favoritesOnly, ids, query, sortMode]);
+
+  // Une rangée incomplète répartirait la largeur entre ses seules cartes :
+  // 1025 n'étant pas divisible par 3, les cases manquantes sont comblées.
+  const rows = useMemo(() => {
+    const missing = (COLUMNS - (visible.length % COLUMNS)) % COLUMNS;
+    return [...visible, ...Array.from({ length: missing }, () => null)];
+  }, [visible]);
 
   // Le nombre de résultats ne se lit que dans la liste elle-même : il doit
   // être annoncé aux lecteurs d'écran.
@@ -115,9 +123,11 @@ export default function Index() {
 
         {!loading && !error ? (
           <Animated.FlatList
-            data={visible}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => <PokemonCard id={item.id} name={item.name} />}
+            data={rows}
+            keyExtractor={(item, index) => (item ? item.id.toString() : `filler-${index}`)}
+            renderItem={({ item }) =>
+              item ? <PokemonCard id={item.id} name={item.name} /> : <View style={styles.filler} />
+            }
             numColumns={COLUMNS}
             columnWrapperStyle={styles.column}
             contentContainerStyle={styles.list}
@@ -137,6 +147,9 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   screen: {
+    flex: 1,
+  },
+  filler: {
     flex: 1,
   },
   circle: {

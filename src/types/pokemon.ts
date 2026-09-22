@@ -23,13 +23,11 @@ export type Pokemon = {
 export type PokemonSpecies = {
   id: number;
   name: string;
-  genus: string;
   description: string;
 };
 
 export type PokemonTypeOption = {
   slug: string;
-  name: string;
 };
 
 export type SortMode = "number" | "name";

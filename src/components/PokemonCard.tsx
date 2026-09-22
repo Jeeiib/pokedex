@@ -7,7 +7,7 @@ import { MOTION } from "@/constants/motion";
 import { elevation, spacing, typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { useA11yLanguage } from "@/i18n";
-import { getArtworkUrl } from "@/services/pokemonService";
+import { getArtworkUrl } from "@/utils/artworkUrl";
 import { formatPokemonId } from "@/utils/formatPokemonId";
 
 // Mesures du fichier Figma : carte de 104x108, artwork de 72 posé en absolu

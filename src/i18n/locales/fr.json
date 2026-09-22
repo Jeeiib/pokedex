@@ -25,6 +25,8 @@
     "baseStats": "Statistiques de base",
     "previous": "Pokémon précédent",
     "next": "Pokémon suivant",
+    "weightUnit": "kg",
+    "heightUnit": "m",
     "playCry": "Écouter le cri de {{name}}"
   },
   "stats": {
@@ -59,7 +61,8 @@
     "loading": "Chargement",
     "error": "Le chargement a échoué",
     "retry": "Réessayer",
-    "notFound": "Ce Pokémon n'existe pas"
+    "notFound": "Ce Pokémon n'existe pas",
+    "close": "Fermer"
   },
   "theme": {
     "action": "Changer de thème",
