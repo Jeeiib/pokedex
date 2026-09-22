@@ -112,10 +112,15 @@ export default function Index() {
             <SortMenu mode={sortMode} onChange={setSortMode} />
           </View>
         </PokedexHeader>
-        <TypeFilterBar types={types} selected={selected} onSelect={select} />
       </SafeAreaView>
 
       <View style={[styles.surface, { backgroundColor: theme.surface }]}>
+        {/* Le filtre vit sur la surface, pas sur le bandeau : les types dont la
+            couleur approche le rouge d'identité y disparaissaient. */}
+        <View style={styles.filterRow}>
+          <TypeFilterBar types={types} selected={selected} onSelect={select} />
+        </View>
+
         {loading ? <Loader /> : null}
 
         {!loading && error ? <ErrorMessage message={t("state.error")} onRetry={reload} /> : null}
@@ -150,6 +155,11 @@ const styles = StyleSheet.create({
   },
   filler: {
     flex: 1,
+  },
+  filterRow: {
+    marginHorizontal: -LIST_PADDING,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
   },
   controls: {
     flexDirection: "row",

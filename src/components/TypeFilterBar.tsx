@@ -43,8 +43,8 @@ export default function TypeFilterBar({ types, selected, onSelect }: TypeFilterB
         style={[
           styles.chip,
           selected === null
-            ? { backgroundColor: theme.onPrimary }
-            : { borderColor: theme.onPrimary, borderWidth: 1 },
+            ? { backgroundColor: theme.textPrimary }
+            : { borderColor: theme.border, borderWidth: 1 },
         ]}
         onPress={() => onSelect(null)}
         accessibilityRole="button"
@@ -55,7 +55,7 @@ export default function TypeFilterBar({ types, selected, onSelect }: TypeFilterB
         <Text
           style={[
             styles.label,
-            { color: selected === null ? theme.primaryText : theme.onPrimary },
+            { color: selected === null ? theme.surface : theme.textPrimary },
           ]}
         >
           {t("list.filterAll")}
@@ -71,7 +71,7 @@ export default function TypeFilterBar({ types, selected, onSelect }: TypeFilterB
             style={[
               styles.chip,
               { backgroundColor: colors.background },
-              active ? { borderColor: theme.onPrimary, borderWidth: 2 } : undefined,
+              active ? { borderColor: theme.textPrimary, borderWidth: 2 } : undefined,
             ]}
             onPress={() => onSelect(active ? null : type.slug)}
             accessibilityRole="button"
