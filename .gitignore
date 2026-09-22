@@ -41,3 +41,6 @@ example
 # generated native folders
 /ios
 /android
+
+# Documents de conception, gardes hors du depot livre
+docs/superpowers/
