@@ -360,7 +360,6 @@ export default function PokemonDetail() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    padding: 4,
   },
   fallback: {
     flex: 1,
@@ -415,9 +414,12 @@ const styles = StyleSheet.create({
     width: ARTWORK_SIZE,
     height: ARTWORK_SIZE,
   },
+  // La carte descend jusqu'au bas de l'écran : encadrée comme dans la maquette,
+  // son liseré passait derrière les coins arrondis de l'iPhone.
   card: {
     flex: 1,
-    borderRadius: 8,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     zIndex: 1,
   },
   cardContent: {
