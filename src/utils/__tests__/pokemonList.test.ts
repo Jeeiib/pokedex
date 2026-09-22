@@ -1,0 +1,117 @@
+import type { PokemonSummary } from "@/types/pokemon";
+import {
+  filterByIds,
+  mergeNames,
+  normalizeSearch,
+  searchPokemons,
+  sortPokemons,
+} from "@/utils/pokemonList";
+
+const index: PokemonSummary[] = [
+  { id: 1, slug: "bulbasaur", name: "bulbasaur" },
+  { id: 4, slug: "charmander", name: "charmander" },
+  { id: 122, slug: "mr-mime", name: "mr-mime" },
+  { id: 151, slug: "mew", name: "mew" },
+];
+
+describe("mergeNames", () => {
+  it("replaces the slug with the translated name", () => {
+    const names = new Map([
+      [1, "Bulbizarre"],
+      [4, "Salamèche"],
+    ]);
+    const merged = mergeNames(index, names);
+    expect(merged[0].name).toBe("Bulbizarre");
+    expect(merged[1].name).toBe("Salamèche");
+  });
+
+  // Couvre le point 3 du Review Focus : une espece absente de la table.
+  it("keeps the slug when no translation exists", () => {
+    const merged = mergeNames(index, new Map([[1, "Bulbizarre"]]));
+    expect(merged[3].name).toBe("mew");
+  });
+
+  it("keeps the slug for every entry when the table is empty", () => {
+    const merged = mergeNames(index, new Map());
+    expect(merged.map((entry) => entry.name)).toEqual([
+      "bulbasaur",
+      "charmander",
+      "mr-mime",
+      "mew",
+    ]);
+  });
+
+  it("never loses an entry", () => {
+    expect(mergeNames(index, new Map())).toHaveLength(index.length);
+  });
+});
+
+describe("normalizeSearch", () => {
+  // Couvre le point 4 du Review Focus : saisie approximative.
+  it("lowercases, trims and strips accents", () => {
+    expect(normalizeSearch("  MEW ")).toBe("mew");
+    expect(normalizeSearch("Salamèche")).toBe("salameche");
+    expect(normalizeSearch("Pokémon")).toBe("pokemon");
+  });
+});
+
+describe("searchPokemons", () => {
+  const translated = mergeNames(index, new Map([[1, "Bulbizarre"]]));
+
+  it("returns everything when the query is blank", () => {
+    expect(searchPokemons(translated, "   ")).toHaveLength(4);
+  });
+
+  it("matches the translated name", () => {
+    expect(searchPokemons(translated, "bulbi").map((entry) => entry.id)).toEqual([1]);
+  });
+
+  it("matches the english slug as well", () => {
+    expect(searchPokemons(translated, "bulba").map((entry) => entry.id)).toEqual([1]);
+  });
+
+  it("ignores case and surrounding spaces", () => {
+    expect(searchPokemons(translated, "  MEW ").map((entry) => entry.id)).toEqual([151]);
+  });
+
+  it("returns an empty list when nothing matches", () => {
+    expect(searchPokemons(translated, "zzz")).toEqual([]);
+  });
+});
+
+describe("sortPokemons", () => {
+  const translated = mergeNames(index, new Map([[151, "Mew"]]));
+
+  it("sorts by pokedex number", () => {
+    expect(sortPokemons(translated, "number").map((entry) => entry.id)).toEqual([1, 4, 122, 151]);
+  });
+
+  it("sorts by displayed name", () => {
+    expect(sortPokemons(translated, "name").map((entry) => entry.name)).toEqual([
+      "bulbasaur",
+      "charmander",
+      "Mew",
+      "mr-mime",
+    ]);
+  });
+
+  it("does not mutate the input list", () => {
+    const original = [...translated];
+    sortPokemons(translated, "name");
+    expect(translated).toEqual(original);
+  });
+});
+
+describe("filterByIds", () => {
+  it("returns the whole list when no filter is active", () => {
+    expect(filterByIds(index, null)).toHaveLength(4);
+  });
+
+  it("keeps only the requested ids", () => {
+    expect(filterByIds(index, [4, 151]).map((entry) => entry.id)).toEqual([4, 151]);
+  });
+
+  it("returns an empty list when the filter matches nothing", () => {
+    expect(filterByIds(index, [9999])).toEqual([]);
+  });
+});
