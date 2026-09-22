@@ -103,12 +103,17 @@ export async function getPokemonSpecies(id: number, language: string): Promise<P
   };
 }
 
-// Les 18 types de la maquette, avec leur nom traduit.
-export async function getTypes(language: string): Promise<PokemonTypeOption[]> {
+// Les types de la maquette, avec leur nom traduit. L'endpoint /type en
+// renvoie 21, dont trois qui n'apparaissent pas dans le jeu.
+export async function getTypes(
+  language: string,
+  allowed: string[]
+): Promise<PokemonTypeOption[]> {
   const code = language.split("-")[0];
   const list = await apiFetch<{ results: NamedApiResource[] }>("/type");
+  const kept = list.results.filter((entry) => allowed.includes(entry.name));
   const details = await Promise.all(
-    list.results.map((entry) =>
+    kept.map((entry) =>
       apiFetch<{ name: string; names: { name: string; language: NamedApiResource }[] }>(
         `/type/${entry.name}`
       )
@@ -116,8 +121,7 @@ export async function getTypes(language: string): Promise<PokemonTypeOption[]> {
   );
   return details.map((detail) => ({
     slug: detail.name,
-    name:
-      detail.names.find((entry) => entry.language.name === code)?.name ?? detail.name,
+    name: detail.names.find((entry) => entry.language.name === code)?.name ?? detail.name,
   }));
 }
 

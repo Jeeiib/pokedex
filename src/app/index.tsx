@@ -11,11 +11,13 @@ import PokemonCard from "@/components/PokemonCard";
 import SearchBar from "@/components/SearchBar";
 import SortMenu from "@/components/SortMenu";
 import ThemeToggle from "@/components/ThemeToggle";
+import TypeFilterModal from "@/components/TypeFilterModal";
 import { spacing, typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { usePokemonIndex } from "@/hooks/usePokemonIndex";
+import { useTypeFilter } from "@/hooks/useTypeFilter";
 import type { SortMode } from "@/types/pokemon";
-import { searchPokemons, sortPokemons } from "@/utils/pokemonList";
+import { filterByIds, searchPokemons, sortPokemons } from "@/utils/pokemonList";
 
 // Mesures du fichier Figma : la surface blanche est posée à 4 des bords, son
 // contenu à 12 de plus, ce qui place les cartes à 16 du bord de l'écran.
@@ -27,13 +29,15 @@ export default function Index() {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { data, loading, error, reload } = usePokemonIndex();
+  const { types, selected, ids, select } = useTypeFilter();
 
   const [query, setQuery] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("number");
 
+  // Filtre puis recherche puis tri : l'ordre donne bien l'intersection.
   const visible = useMemo(
-    () => sortPokemons(searchPokemons(data, query), sortMode),
-    [data, query, sortMode]
+    () => sortPokemons(searchPokemons(filterByIds(data, ids), query), sortMode),
+    [data, ids, query, sortMode]
   );
 
   // Le nombre de résultats ne se lit que dans la liste elle-même : il doit
@@ -51,6 +55,7 @@ export default function Index() {
         <PokedexHeader>
           <View style={styles.controls}>
             <SearchBar value={query} onChangeText={setQuery} />
+            <TypeFilterModal types={types} selected={selected} onSelect={select} />
             <SortMenu mode={sortMode} onChange={setSortMode} />
             <LanguageToggle />
             <ThemeToggle />
