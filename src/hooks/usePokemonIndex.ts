@@ -14,30 +14,48 @@ export function usePokemonIndex() {
   const [data, setData] = useState<PokemonSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const index = await getPokemonIndex();
-      // Seule dégradation silencieuse de l'application : si la table de noms
-      // tombe, la liste s'affiche avec les slugs plutôt que de bloquer.
-      const names = await getNames(language).catch(() => new Map<number, string>());
-      setData(mergeNames(index, names));
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : String(cause));
-    } finally {
-      setLoading(false);
-    }
-  }, [language]);
+  // Relance le chargement sans dupliquer la logique de l'effet.
+  const reload = useCallback(() => {
+    setAttempt((current) => current + 1);
+  }, []);
 
   useEffect(() => {
-    // Chargement initial du hook de données, rechargement exposé via `reload` :
-    // le schéma de fetch en effet documenté par React, que la règle signale
-    // par principe quel que soit le cas d'usage.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    load();
-  }, [load]);
+    // Garde contre les réponses obsolètes : un changement de langue ou un
+    // rechargement pendant une requête en vol laisse la précédente arriver,
+    // et sans ce drapeau elle écraserait les données les plus récentes.
+    let ignore = false;
 
-  return { data, loading, error, reload: load };
+    async function run() {
+      setError(null);
+      try {
+        const index = await getPokemonIndex();
+        // Seule dégradation silencieuse de l'application : si la table de noms
+        // tombe, la liste s'affiche avec les slugs plutôt que de bloquer.
+        const names = await getNames(language).catch(() => new Map<number, string>());
+        if (!ignore) {
+          setData(mergeNames(index, names));
+        }
+      } catch (cause) {
+        if (!ignore) {
+          setError(cause instanceof Error ? cause.message : String(cause));
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(true);
+    run();
+
+    return () => {
+      ignore = true;
+    };
+  }, [language, attempt]);
+
+  return { data, loading, error, reload };
 }
