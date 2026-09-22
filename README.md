@@ -68,6 +68,63 @@ et `src/app/pokemon/[id].tsx` est la route dynamique de la fiche.
    comptent les formes régionales et les méga-évolutions comme des entrées
    distinctes.
 
+## Écarts à la maquette, et pourquoi
+
+La maquette Figma fournie avec le sujet a servi de point de départ, pas de
+contrainte. Chaque écart ci-dessous a été mesuré sur simulateur iOS avant d'être
+décidé.
+
+### La typographie suit l'échelle d'iOS, pas celle de la maquette
+
+La maquette place le corps de texte à 10 points et certains libellés à 8. Elle a
+été dessinée sur un écran, où l'on regarde à trente centimètres ; un téléphone se
+tient à bout de bras. Apple fixe le corps de texte à 17 points et considère 11
+comme un plancher. L'application était donc à 59 pour cent de l'échelle système.
+
+Tout le texte a été recalé : corps à 17, nom du Pokémon à 34, libellés à 13. La
+description de la fiche passe aussi de justifiée à alignée à gauche : sur une
+colonne de quarante caractères, la justification creuse des blancs entre les
+mots.
+
+### La police du système remplace Poppins
+
+Poppins est une géométrique dont les accents sont presque verticaux, ce qui rend
+le grave et l'aigu difficiles à distinguer en petit corps, sur une application
+française. La police du système, SF Pro sur iOS et Roboto sur Android, dessine
+des accents lisibles, expose des chiffres tabulaires qui alignent les
+statistiques en colonne, et surtout suit nativement le réglage de taille de
+texte du téléphone. L'application n'a plus aucune police à télécharger, donc
+plus rien à attendre avant le premier rendu.
+
+### Les cibles tactiles passent de 32 à 44 points
+
+Mesurées sur simulateur, les commandes de la liste faisaient 32 points, et les
+bascules de langue et de thème 15 et 20. Apple demande 44. À noter : la
+propriété `hitSlop` de React Native agrandit la zone du doigt mais pas le cadre
+exposé au système, donc VoiceOver continuait d'annoncer des cibles de 15 points.
+Les éléments ont été agrandis pour de vrai.
+
+### Le filtre par type quitte la fenêtre modale
+
+La maquette cache les types derrière une feuille. Ils occupent désormais une
+bande horizontale sous la recherche : le type actif est visible en permanence et
+en changer coûte un seul appui au lieu de trois. Les types sont triés dans la
+langue affichée, et non plus dans l'ordre alphabétique de leurs identifiants
+anglais, qui paraissait aléatoire en français.
+
+### Le numéro de l'espèce remplace la Pokéball en filigrane
+
+La fiche portait une Pokéball géante en fond, qui ne dit rien et concurrence
+l'artwork sur les types clairs. Elle laisse la place au numéro de l'espèce, en
+creux derrière le visuel. Dans un Pokédex, le numéro est l'identité de la
+créature. Par symétrie, sur les cartes de la liste, le numéro passe sous le nom
+et s'efface : c'est le nom qu'on cherche dans une grille.
+
+### La surface blanche descend jusqu'au bas de l'écran
+
+La maquette l'encadre de rouge sur ses quatre côtés. Sur un iPhone, ce liseré de
+quatre points passe derrière les coins arrondis de l'écran et paraît accidentel.
+
 ## Tests
 
 ```bash

@@ -94,6 +94,28 @@ export async function getPokemonSpecies(id: number, language: string): Promise<P
 }
 
 // Identifiants des Pokémon d'un type, bornés aux espèces numérotées.
+// Noms traduits des talents. Ils n'existent que sur /ability, une requête par
+// talent, d'où l'appel séparé : la fiche s'affiche sans les attendre.
+export async function getAbilityNames(
+  slugs: string[],
+  language: string
+): Promise<Map<string, string>> {
+  const code = language.split("-")[0];
+  const details = await Promise.all(
+    slugs.map((slug) =>
+      apiFetch<{ name: string; names: { name: string; language: NamedApiResource }[] }>(
+        `/ability/${slug}`
+      )
+    )
+  );
+  return new Map(
+    details.map((detail) => [
+      detail.name,
+      detail.names.find((entry) => entry.language.name === code)?.name ?? detail.name,
+    ])
+  );
+}
+
 export async function getPokemonIdsByType(slug: string): Promise<number[]> {
   const payload = await apiFetch<{ pokemon: { pokemon: NamedApiResource }[] }>(`/type/${slug}`);
   return payload.pokemon

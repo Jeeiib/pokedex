@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { getPokemonById, getPokemonSpecies } from "@/services/pokemonService";
+import { getAbilityNames, getPokemonById, getPokemonSpecies } from "@/services/pokemonService";
 import type { Pokemon, PokemonSpecies } from "@/types/pokemon";
 import { cleanFlavorText } from "@/utils/cleanFlavorText";
 
@@ -41,8 +41,16 @@ export function usePokemonDetail(id: number | null) {
           getPokemonById(id),
           getPokemonSpecies(id, language),
         ]);
+        // Les talents se traduisent en une requête chacun : un échec laisse
+        // leur nom anglais plutôt que de priver la fiche de ses données.
+        const abilityNames = await getAbilityNames(detail.abilities, language).catch(
+          () => new Map<string, string>()
+        );
         if (!ignore) {
-          setPokemon(detail);
+          setPokemon({
+            ...detail,
+            abilities: detail.abilities.map((slug) => abilityNames.get(slug) ?? slug),
+          });
           setSpecies({
             ...speciesDetail,
             description: cleanFlavorText(speciesDetail.description),
