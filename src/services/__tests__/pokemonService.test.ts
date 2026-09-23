@@ -1,7 +1,9 @@
+// Vérifie que la fiche Pokémon reconstruite ordonne les types par emplacement
+// et gère l'absence de cri.
+
 import { getPokemonById } from "@/services/pokemonService";
 
-// globalThis plutôt que global : le tsconfig ne charge que les types jest,
-// pas les types node qui déclarent `global` (voir api.test.ts).
+// Remplace fetch par une réponse contrôlée le temps d'un test.
 function mockFetch(response: Partial<Response> & { json?: () => Promise<unknown> }) {
   globalThis.fetch = jest.fn().mockResolvedValue(response) as unknown as typeof fetch;
 }
@@ -11,8 +13,6 @@ describe("getPokemonById", () => {
     jest.restoreAllMocks();
   });
 
-  // L'ordre du tableau types n'est pas garanti par l'api, et le premier type
-  // donne la couleur de fond de la fiche.
   it("orders the types by slot, not by array position", async () => {
     mockFetch({
       ok: true,

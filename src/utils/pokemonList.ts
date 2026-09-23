@@ -1,5 +1,9 @@
+// Recherche, tri et filtrage de la liste des Pokémon.
+
 import type { PokemonSummary, SortMode } from "@/types/pokemon";
 
+// Complète la liste des espèces avec leurs noms traduits, en repliant sur le
+// slug quand la traduction est absente.
 export function mergeNames(
   index: PokemonSummary[],
   names: Map<number, string>
@@ -10,6 +14,7 @@ export function mergeNames(
   }));
 }
 
+// Normalise une chaîne pour la recherche en ignorant casse et accents.
 export function normalizeSearch(value: string): string {
   return value
     .trim()
@@ -18,6 +23,8 @@ export function normalizeSearch(value: string): string {
     .replace(/[\u0300-\u036F]/g, "");
 }
 
+// Filtre la liste sur le nom ou le slug, sans distinction de casse ni
+// d'accents.
 export function searchPokemons(list: PokemonSummary[], query: string): PokemonSummary[] {
   const needle = normalizeSearch(query);
   if (needle === "") {
@@ -30,6 +37,7 @@ export function searchPokemons(list: PokemonSummary[], query: string): PokemonSu
   );
 }
 
+// Trie la liste par nom ou par numéro selon le mode demandé.
 export function sortPokemons(list: PokemonSummary[], mode: SortMode): PokemonSummary[] {
   const sorted = [...list];
   if (mode === "name") {
@@ -38,6 +46,8 @@ export function sortPokemons(list: PokemonSummary[], mode: SortMode): PokemonSum
   return sorted.sort((a, b) => a.id - b.id);
 }
 
+// Restreint la liste aux identifiants fournis, ou la laisse intacte si aucune
+// restriction n'est donnée.
 export function filterByIds(
   list: PokemonSummary[],
   ids: number[] | null
@@ -49,8 +59,8 @@ export function filterByIds(
   return list.filter((entry) => allowed.has(entry.id));
 }
 
-// Intersection (ET) : un identifiant ne reste que s'il figure dans chacune
-// des listes, pas seulement une.
+// Intersection (ET) : un identifiant ne reste que s'il figure dans chacune des
+// listes, pas seulement une.
 export function intersectIds(lists: number[][]): number[] {
   if (lists.length === 0) {
     return [];

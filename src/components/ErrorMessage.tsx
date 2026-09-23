@@ -1,3 +1,5 @@
+// Message d'erreur plein écran avec un bouton pour relancer le chargement.
+
 import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -10,6 +12,8 @@ type ErrorMessageProps = {
   onRetry: () => void;
 };
 
+// Affiche le message fourni et déclenche la nouvelle tentative au clic sur le
+// bouton.
 export default function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
   const { t } = useTranslation();
   const { theme } = useTheme();

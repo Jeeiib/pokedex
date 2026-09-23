@@ -1,3 +1,6 @@
+// Fiche détaillée d'une espèce : pager horizontal entre les fiches, navigable
+// au doigt ou par les flèches, trois pages montées à la fois.
+
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useRef, useState } from "react";
 import {
@@ -12,14 +15,12 @@ import PokemonPage from "@/components/PokemonPage";
 import { FIRST_SPECIES, LAST_SPECIES } from "@/constants/pokedex";
 import { parsePokemonId } from "@/utils/parsePokemonId";
 
-// Les espèces sont posées côte à côte dans une liste horizontale paginée : on
-// passe d'une fiche à l'autre au doigt, et l'écran glisse dans le sens du
-// geste. Seules trois pages sont montées à la fois.
 const IDS = Array.from(
   { length: LAST_SPECIES - FIRST_SPECIES + 1 },
   (_, index) => FIRST_SPECIES + index
 );
 
+// Revient à l'écran précédent s'il existe, sinon retombe sur la liste.
 function goBack() {
   if (router.canGoBack()) {
     router.back();
@@ -28,6 +29,7 @@ function goBack() {
   router.replace("/");
 }
 
+// Résout l'identifiant de l'URL et pilote le pager horizontal entre les fiches.
 export default function PokemonDetail() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
   const requestedId = parsePokemonId(rawId);
@@ -51,8 +53,6 @@ export default function PokemonDetail() {
     [width, show]
   );
 
-  // Les flèches restent la seule façon de changer de fiche au lecteur d'écran,
-  // qui ne peut pas balayer : elles déclenchent le même défilement.
   const goToNeighbour = useCallback(
     (step: number) => {
       const target = currentId + step;

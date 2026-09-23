@@ -1,3 +1,6 @@
+// Vérifie la conversion du poids et de la taille renvoyés par l'api et leur
+// formatage décimal selon la locale.
+
 import { formatDecimal, toKilograms, toMeters } from "@/utils/formatMeasures";
 
 describe("toKilograms", () => {

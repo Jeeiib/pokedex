@@ -1,3 +1,6 @@
+// Vérifie que la liste des favoris s'ajoute et se retire sans mutation ni
+// doublon, et que son stockage se relit même mal formé.
+
 import { parseFavorites, toggleFavorite } from "@/utils/favorites";
 
 describe("toggleFavorite", () => {
@@ -30,7 +33,6 @@ describe("parseFavorites", () => {
     expect(parseFavorites(null)).toEqual([]);
   });
 
-  // Le stockage peut avoir été écrit par une version précédente ou corrompu.
   it("returns an empty list on malformed content", () => {
     expect(parseFavorites("not json")).toEqual([]);
     expect(parseFavorites('{"id":1}')).toEqual([]);

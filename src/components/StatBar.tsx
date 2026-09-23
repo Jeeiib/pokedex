@@ -1,3 +1,6 @@
+// Barre animée qui représente une statistique de base d'un Pokémon, rapportée à
+// son maximum réel de 255.
+
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View, type LayoutChangeEvent } from "react-native";
 import Animated, {
@@ -16,14 +19,9 @@ import { useTheme } from "@/contexts/ThemeProvider";
 import { useA11yLanguage } from "@/i18n";
 import { formatStatValue } from "@/utils/formatStat";
 
-// 255 est le maximum réel d'une statistique de base, atteint par Leuphorie.
 const MAX_BASE_STAT = 255;
 
-// Mesures du fichier Figma : ligne de 16, libellé sur 27, valeur sur 19,
-// barre de 4 de haut. La piste est la couleur du type à 20 pour cent.
 const ROW_HEIGHT = 24;
-// Largeurs calées sur les libellés français, plus longs que les trois lettres
-// de la maquette anglaise : « Déf. Spé. » contre « SDEF ».
 const LABEL_WIDTH = 92;
 const VALUE_WIDTH = 42;
 const BAR_HEIGHT = 6;
@@ -36,13 +34,13 @@ type StatBarProps = {
   index: number;
 };
 
+// Mesure la piste disponible puis anime le remplissage jusqu'à la valeur
+// réelle, en respectant la réduction de mouvement du système.
 export default function StatBar({ label, value, color, index }: StatBarProps) {
   const { theme } = useTheme();
   const a11yLanguage = useA11yLanguage();
   const reducedMotion = useReducedMotion();
 
-  // La largeur est animée en pixels : la piste est mesurée plutôt que d'animer
-  // un pourcentage, ce qui évite aussi de déformer les arrondis avec scaleX.
   const [trackWidth, setTrackWidth] = useState(0);
   const width = useSharedValue(0);
 

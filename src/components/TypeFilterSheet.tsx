@@ -1,3 +1,6 @@
+// Feuille modale qui liste les dix-huit types de Pokémon et en laisse
+// sélectionner deux au plus pour filtrer la liste.
+
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -28,8 +31,6 @@ import type { PokemonTypeOption } from "@/types/pokemon";
 
 const COLUMNS = 3;
 const SHEET_RADIUS = 16;
-// La feuille laisse toujours voir un morceau de la liste, même quand la taille
-// de texte du système fait grandir la grille.
 const SHEET_MAX_RATIO = 0.88;
 
 type TypeFilterSheetProps = {
@@ -43,6 +44,8 @@ type TypeFilterSheetProps = {
   onClose: () => void;
 };
 
+// Anime l'entrée et la sortie de la feuille, trie les types selon la langue
+// courante, et bloque la sélection au-delà de la limite autorisée.
 export default function TypeFilterSheet({
   visible,
   types,
@@ -59,8 +62,6 @@ export default function TypeFilterSheet({
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
 
-  // Le démontage attend la fin de l'animation de sortie : la modale se
-  // retirerait sinon avant que le voile ait fini de s'effacer.
   const [rendered, setRendered] = useState(false);
   const [sheetHeight, setSheetHeight] = useState(0);
   const progress = useSharedValue(0);
@@ -88,14 +89,10 @@ export default function TypeFilterSheet({
 
   const scrimStyle = useAnimatedStyle(() => ({ opacity: progress.value }));
 
-  // La feuille monte depuis le bas de l'écran. Avant sa première mesure, une
-  // course par défaut tient lieu de hauteur.
   const sheetStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: (1 - progress.value) * (sheetHeight || 480) }],
   }));
 
-  // Les types arrivent dans l'ordre alphabétique de leurs identifiants
-  // anglais, ce qui paraît désordonné une fois les noms traduits.
   const sorted = useMemo(
     () =>
       [...types].sort((left, right) =>
@@ -114,9 +111,6 @@ export default function TypeFilterSheet({
       onRequestClose={onClose}
       statusBarTranslucent
     >
-      {/* Le voile est un frère de la feuille, jamais son parent : un Pressable
-          parent groupe tout son contenu en un seul élément et le rend
-          inatteignable au lecteur d'écran. */}
       <View style={styles.container} accessibilityViewIsModal>
         <Animated.View style={[styles.backdrop, scrimStyle]}>
           <Pressable
@@ -189,8 +183,6 @@ export default function TypeFilterSheet({
                   ]}
                   onPress={() => onToggle(type.slug)}
                   disabled={blocked}
-                  // iOS n'expose pas de trait « case à cocher » : un rôle
-                  // checkbox retirerait aux puces leur nature de contrôle.
                   accessibilityRole="button"
                   accessibilityState={{ selected: checked, disabled: blocked }}
                   accessibilityLabel={t(`types.${type.slug}`)}

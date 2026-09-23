@@ -1,3 +1,6 @@
+// Layout racine : pose les providers globaux (thème, favoris, démarrage) et
+// orchestre la transition entre l'écran de démarrage natif et le splash animé.
+
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -13,9 +16,9 @@ import "@/i18n";
 SplashScreen.preventAutoHideAsync().catch(() => {});
 SplashScreen.setOptions({ duration: MOTION.splashReveal.duration, fade: true });
 
+// L'application n'a aucune police à charger : l'écran de démarrage natif se
+// retire dès le premier rendu et le splash animé prend le relais.
 export default function RootLayout() {
-  // L'application utilise la police du système : rien à charger, donc l'écran
-  // natif se retire dès le premier rendu et le composant animé prend le relais.
   useEffect(() => {
     SplashScreen.hideAsync().catch(() => {});
   }, []);

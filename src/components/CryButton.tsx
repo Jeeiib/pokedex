@@ -1,3 +1,6 @@
+// Bouton qui joue le cri du Pokémon, désactivé quand aucune source audio n'est
+// disponible.
+
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useAudioPlayer } from "expo-audio";
 import { useTranslation } from "react-i18next";
@@ -7,7 +10,6 @@ import { iconSize, touchArea } from "@/constants/theme";
 import { useA11yLanguage } from "@/i18n";
 import { resolveCryUrl } from "@/utils/cryUrl";
 
-
 type CryButtonProps = {
   slug: string;
   officialUrl: string | null;
@@ -16,6 +18,8 @@ type CryButtonProps = {
   onPlay?: () => void;
 };
 
+// Rejoue le cri depuis le début à chaque appui, sans jamais bloquer la fiche si
+// le fichier est introuvable.
 export default function CryButton({ slug, officialUrl, name, color, onPlay }: CryButtonProps) {
   const { t } = useTranslation();
   const a11yLanguage = useA11yLanguage();
@@ -26,8 +30,6 @@ export default function CryButton({ slug, officialUrl, name, color, onPlay }: Cr
     if (!url) {
       return;
     }
-    // Rembobiner avant de jouer permet de réappuyer sans attendre la fin.
-    // Un fichier absent laisse le lecteur inerte, la fiche continue de vivre.
     player.seekTo(0);
     player.play();
     onPlay?.();

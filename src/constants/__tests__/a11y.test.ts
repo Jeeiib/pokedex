@@ -1,3 +1,6 @@
+// Vérifie que chaque langue de l'application se convertit en étiquette BCP-47
+// correcte, y compris pour les variantes régionales et le repli en français.
+
 import { toA11yLanguage } from "@/constants/a11y";
 
 describe("toA11yLanguage", () => {

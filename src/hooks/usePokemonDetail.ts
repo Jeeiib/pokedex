@@ -1,3 +1,5 @@
+// Récupère le détail et la fiche espèce d'un Pokémon, dans la langue active.
+
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -5,7 +7,8 @@ import { getAbilityNames, getPokemonById, getPokemonSpecies } from "@/services/p
 import type { Pokemon, PokemonSpecies } from "@/types/pokemon";
 import { cleanFlavorText } from "@/utils/cleanFlavorText";
 
-// Détail et espèce d'un Pokémon. Un identifiant nul ne déclenche aucun appel.
+// Charge le détail et l'espèce de l'identifiant donné, puis traduit ses
+// talents.
 export function usePokemonDetail(id: number | null) {
   const { i18n } = useTranslation();
   const language = i18n.language;
@@ -38,8 +41,6 @@ export function usePokemonDetail(id: number | null) {
           getPokemonById(id),
           getPokemonSpecies(id, language),
         ]);
-        // Les talents se traduisent en une requête chacun : un échec laisse
-        // leur nom anglais plutôt que de priver la fiche de ses données.
         const abilityNames = await getAbilityNames(detail.abilities, language).catch(
           () => new Map<string, string>()
         );

@@ -1,16 +1,18 @@
-import { useCallback, useEffect, useState } from "react";
+// Filtre par type : jusqu'à deux types sélectionnables parmi les 18 de la
+// maquette, noms traduits localement.
 
+import { useCallback, useEffect, useState } from "react";
 import { POKEMON_TYPES } from "@/constants/pokemonTypes";
 import { getPokemonIdsByType } from "@/services/pokemonService";
 import type { PokemonTypeOption } from "@/types/pokemon";
 import { intersectIds } from "@/utils/pokemonList";
 
-// La liste des types est locale : ce sont les 18 de la maquette, et leur nom
-// affiché vient des traductions, pas de l'api.
 const TYPES: PokemonTypeOption[] = Object.keys(POKEMON_TYPES).map((slug) => ({ slug }));
 
 export const MAX_TYPES = 2;
 
+// Croise les identifiants renvoyés pour chaque type sélectionné et ignore les
+// réponses d'une sélection périmée.
 export function useTypeFilter() {
   const [selected, setSelected] = useState<string[]>([]);
   const [ids, setIds] = useState<number[] | null>(null);
@@ -21,8 +23,6 @@ export function useTypeFilter() {
       setIds(null);
       return;
     }
-    // Passer vite d'une sélection à l'autre ne doit pas laisser la réponse la
-    // plus lente décider du filtre affiché.
     let ignore = false;
     Promise.all(selected.map((slug) => getPokemonIdsByType(slug)))
       .then((results) => {
@@ -45,8 +45,6 @@ export function useTypeFilter() {
       if (current.includes(slug)) {
         return current.filter((entry) => entry !== slug);
       }
-      // Référence inchangée : React ignore la mise à jour, pas de requête
-      // pour un type qui ne sera pas retenu.
       if (current.length >= MAX_TYPES) {
         return current;
       }

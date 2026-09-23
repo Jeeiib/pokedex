@@ -1,3 +1,6 @@
+// En-tête du Pokédex avec la pokéball et le titre, dont la taille se compacte
+// au défilement.
+
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
@@ -14,8 +17,6 @@ import { useA11yLanguage } from "@/i18n";
 
 import Pokeball from "./Pokeball";
 
-// Mesures du fichier Figma : contenu à 16 du bord, pokéball de 24 à 16 du
-// texte. Le titre suit l'échelle d'iOS et se compacte au défilement.
 const BALL_SIZE = 24;
 const COMPACT_AT = 80;
 const TITLE_SIZE = [typography.appTitle.fontSize, 22];
@@ -27,12 +28,14 @@ type PokedexHeaderProps = {
   children?: ReactNode;
 };
 
+// Réduit le titre sur les quatre-vingts premiers pixels de défilement puis le
+// stabilise, tout en laissant passer les actions et le contenu additionnel
+// fournis.
 export default function PokedexHeader({ scrollY, actions, children }: PokedexHeaderProps) {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const a11yLanguage = useA11yLanguage();
 
-  // Le titre se réduit sur les 80 premiers pixels de défilement, puis se tient.
   const titleStyle = useAnimatedStyle(() => ({
     fontSize: interpolate(scrollY.value, [0, COMPACT_AT], TITLE_SIZE, Extrapolation.CLAMP),
     lineHeight: interpolate(scrollY.value, [0, COMPACT_AT], TITLE_LINE, Extrapolation.CLAMP),

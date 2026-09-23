@@ -1,3 +1,6 @@
+// Contexte de thème : clair, sombre ou système, avec persistance du choix dans
+// le stockage local.
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { useColorScheme } from "react-native";
@@ -22,10 +25,14 @@ const ThemeContext = createContext<ThemeContextValue>({
   setMode: () => {},
 });
 
+// Vérifie qu'une valeur lue du stockage correspond bien à un mode de thème
+// valide.
 function isMode(value: string | null): value is ThemeMode {
   return value === "light" || value === "dark" || value === "system";
 }
 
+// Résout le thème effectif entre le mode choisi et celui du système, et
+// persiste le choix.
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const systemScheme = useColorScheme();
   const [mode, setModeState] = useState<ThemeMode>("system");
@@ -38,7 +45,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           setModeState(stored);
         }
       })
-      // Un stockage illisible laisse le mode par défaut, il ne casse pas l'ouverture.
       .catch(() => {});
     return () => {
       ignore = true;
@@ -50,8 +56,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     AsyncStorage.setItem(STORAGE_KEY, next).catch(() => {});
   }
 
-  // useColorScheme peut renvoyer "unspecified" (RN récent) en plus de null :
-  // seul "dark" bascule le thème, tout le reste retombe sur le clair.
   const scheme = mode === "system" ? (systemScheme === "dark" ? "dark" : "light") : mode;
   const theme = scheme === "dark" ? darkTheme : lightTheme;
 
@@ -62,6 +66,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// Donne accès au thème courant, au mode et à leur mise à jour.
 export function useTheme() {
   return useContext(ThemeContext);
 }

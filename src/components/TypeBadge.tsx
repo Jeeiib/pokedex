@@ -1,3 +1,6 @@
+// Puce qui affiche un type de Pokémon dans sa couleur, avec une entrée animée
+// décalée selon son rang.
+
 import { StyleSheet, Text } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
@@ -9,11 +12,11 @@ import { useA11yLanguage } from "@/i18n";
 type TypeBadgeProps = {
   slug: string;
   label: string;
-  // Rang de la puce dans la fiche, qui décale son entrée. Les puces ne vivent
-  // pas dans une liste recyclée : une animation d'entrée y est sans danger.
   index?: number;
 };
 
+// Anime l'entrée de la puce avec un décalage croissant selon son index dans la
+// liste des types.
 export default function TypeBadge({ slug, label, index = 0 }: TypeBadgeProps) {
   const colors = getTypeColors(slug);
   const a11yLanguage = useA11yLanguage();

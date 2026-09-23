@@ -1,3 +1,5 @@
+// Bouton qui bascule la langue de l'application entre le français et l'anglais.
+
 import { useTranslation } from "react-i18next";
 import { AccessibilityInfo, Pressable, StyleSheet, Text } from "react-native";
 
@@ -6,6 +8,8 @@ import { touchArea, typography } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { setAppLanguage, useA11yLanguage } from "@/i18n";
 
+// Change la langue courante au clic et annonce le changement au lecteur
+// d'écran.
 export default function LanguageToggle() {
   const { t, i18n } = useTranslation();
   const { theme } = useTheme();

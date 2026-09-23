@@ -1,3 +1,6 @@
+// Vérifie que le numéro du Pokédex est affiché sur trois chiffres au minimum,
+// sans tronquer les numéros plus longs.
+
 import { formatPokemonId } from "@/utils/formatPokemonId";
 
 describe("formatPokemonId", () => {

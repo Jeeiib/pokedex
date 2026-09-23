@@ -1,6 +1,9 @@
+// Vérifie que la table des dix-huit types Pokémon respecte les couleurs de la
+// maquette et un contraste conforme aux normes WCAG AA.
+
 import { POKEMON_TYPES, getTypeColors } from "@/constants/pokemonTypes";
 
-// Luminance relative WCAG, pour vérifier les contrastes de la table.
+// Luminance relative d'une couleur, au sens du calcul de contraste WCAG.
 function luminance(hex: string) {
   const channels = [1, 3, 5]
     .map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
@@ -8,6 +11,7 @@ function luminance(hex: string) {
   return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
 }
 
+// Rapport de contraste entre deux couleurs, de 1 à 21.
 function contrast(a: string, b: string) {
   const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
   return (light + 0.05) / (dark + 0.05);

@@ -1,3 +1,5 @@
+// Appelle PokeAPI et met en forme ses réponses dans les types du domaine.
+
 import { LAST_SPECIES } from "@/constants/pokedex";
 import type { Pokemon, PokemonSpecies, PokemonSummary } from "@/types/pokemon";
 
@@ -7,15 +9,20 @@ const LANGUAGE_IDS: Record<string, number> = { fr: 5, en: 9 };
 
 type NamedApiResource = { name: string; url: string };
 
+// Extrait l'identifiant numérique porté par l'URL d'une ressource PokeAPI, par
+// exemple `.../pokemon/25/`.
 function idFromUrl(url: string): number {
   const segments = url.split("/").filter(Boolean);
   return Number(segments[segments.length - 1]);
 }
 
+// Convertit un code de langue façon fr-FR en identifiant numérique attendu par
+// l'API GraphQL, avec repli sur le français.
 function languageId(language: string): number {
   return LANGUAGE_IDS[language.split("-")[0]] ?? LANGUAGE_IDS.fr;
 }
 
+// Récupère la liste complète des espèces, sans les noms traduits.
 export async function getPokemonIndex(): Promise<PokemonSummary[]> {
   const payload = await apiFetch<{ results: NamedApiResource[] }>(
     `/pokemon-species?limit=${LAST_SPECIES}`
@@ -26,7 +33,7 @@ export async function getPokemonIndex(): Promise<PokemonSummary[]> {
   });
 }
 
-// Noms traduits des 1025 espèces, en une requête.
+// Récupère les noms traduits des 1025 espèces en une seule requête GraphQL.
 export async function getNames(language: string): Promise<Map<number, string>> {
   const query = `{
     pokemonspeciesname(where: { language_id: { _eq: ${languageId(language)} } }) {
@@ -40,6 +47,9 @@ export async function getNames(language: string): Promise<Map<number, string>> {
   return new Map(payload.pokemonspeciesname.map((row) => [row.pokemon_species_id, row.name]));
 }
 
+// Récupère le détail d'un Pokémon et trie ses types par slot plutôt que par
+// l'ordre du tableau, qui n'est pas garanti : le type dominant donne la couleur
+// de fond de la fiche.
 export async function getPokemonById(id: number): Promise<Pokemon> {
   const payload = await apiFetch<{
     id: number;
@@ -55,8 +65,6 @@ export async function getPokemonById(id: number): Promise<Pokemon> {
   return {
     id: payload.id,
     slug: payload.name,
-    // L'ordre du tableau n'est pas garanti, le slot fait foi : le type
-    // dominant donne la couleur de fond de la fiche.
     types: [...payload.types].sort((a, b) => a.slot - b.slot).map((entry) => entry.type.name),
     weightHg: payload.weight,
     heightDm: payload.height,
@@ -69,6 +77,9 @@ export async function getPokemonById(id: number): Promise<Pokemon> {
   };
 }
 
+// Récupère le nom et la description d'une espèce, en repliant sur l'anglais
+// plutôt que sur la première langue du tableau, où PokeAPI place le japonais en
+// tête.
 export async function getPokemonSpecies(id: number, language: string): Promise<PokemonSpecies> {
   const code = language.split("-")[0];
   const payload = await apiFetch<{
@@ -77,8 +88,6 @@ export async function getPokemonSpecies(id: number, language: string): Promise<P
     flavor_text_entries: { flavor_text: string; language: NamedApiResource }[];
   }>(`/pokemon-species/${id}`);
 
-  // PokeAPI trie ces tableaux par langue et le japonais y est en tête : un
-  // repli sur le premier venu afficherait des katakana. L'anglais d'abord.
   const pick = <T extends { language: NamedApiResource }>(entries: T[]) =>
     entries.find((entry) => entry.language.name === code) ??
     entries.find((entry) => entry.language.name === "en") ??
@@ -91,8 +100,8 @@ export async function getPokemonSpecies(id: number, language: string): Promise<P
   };
 }
 
-// Noms traduits des talents. Ils n'existent que sur /ability, une requête par
-// talent, d'où l'appel séparé : la fiche s'affiche sans les attendre.
+// Récupère les noms traduits des talents, absents de la fiche Pokémon et
+// disponibles uniquement via une requête par talent sur /ability.
 export async function getAbilityNames(
   slugs: string[],
   language: string
@@ -113,7 +122,8 @@ export async function getAbilityNames(
   );
 }
 
-// Identifiants des Pokémon d'un type, bornés aux espèces numérotées.
+// Récupère les identifiants des Pokémon d'un type donné, en écartant les
+// espèces hors numérotation.
 export async function getPokemonIdsByType(slug: string): Promise<number[]> {
   const payload = await apiFetch<{ pokemon: { pokemon: NamedApiResource }[] }>(`/type/${slug}`);
   return payload.pokemon

@@ -1,3 +1,6 @@
+// Couleurs de fond et de texte associées à chacun des dix-huit types Pokémon,
+// calibrées pour un contraste suffisant.
+
 export const POKEMON_TYPES = {
   bug: { background: "#A7B723", foreground: "#1D1D1D" },
   dark: { background: "#75574C", foreground: "#FFFFFF" },
@@ -26,6 +29,8 @@ export type TypeColors = {
   foreground: string;
 };
 
+// Renvoie les couleurs du type demandé, avec repli sur le type normal si le
+// slug est inconnu.
 export function getTypeColors(slug: string): TypeColors {
   return POKEMON_TYPES[slug as PokemonTypeSlug] ?? POKEMON_TYPES.normal;
 }

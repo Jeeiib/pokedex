@@ -1,8 +1,9 @@
+// Vérifie que le slug Showdown est dérivé correctement du slug de l'api et que
+// l'url du cri est résolue ou nulle selon les données disponibles.
+
 import { resolveCryUrl, toShowdownSlug } from "@/utils/cryUrl";
 
 describe("toShowdownSlug", () => {
-  // La source de repli renvoie 404 sur les slugs à tiret, et 200 une fois les
-  // tirets retirés.
   it("removes every hyphen from the api slug", () => {
     expect(toShowdownSlug("mr-mime")).toBe("mrmime");
     expect(toShowdownSlug("ho-oh")).toBe("hooh");
@@ -20,7 +21,6 @@ describe("toShowdownSlug", () => {
 });
 
 describe("resolveCryUrl", () => {
-  // Aucune adresse jouable : le bouton doit rester inerte.
   it("returns null when there is no official url and no slug", () => {
     expect(resolveCryUrl("", null)).toBeNull();
   });

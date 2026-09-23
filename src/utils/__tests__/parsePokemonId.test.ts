@@ -1,3 +1,6 @@
+// Vérifie que le paramètre d'identifiant venant de l'url n'est accepté que s'il
+// correspond à un numéro valide du Pokédex.
+
 import { parsePokemonId } from "@/utils/parsePokemonId";
 
 describe("parsePokemonId", () => {
@@ -6,7 +9,6 @@ describe("parsePokemonId", () => {
     expect(parsePokemonId("1025")).toBe(1025);
   });
 
-  // L'identifiant vient de l'url : il peut valoir n'importe quoi.
   it("rejects a non numeric parameter", () => {
     expect(parsePokemonId("abc")).toBeNull();
     expect(parsePokemonId("12abc")).toBeNull();

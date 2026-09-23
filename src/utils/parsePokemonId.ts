@@ -1,7 +1,10 @@
+// Validation de l'identifiant de Pokémon reçu depuis l'URL.
+
 import { FIRST_SPECIES, LAST_SPECIES } from "@/constants/pokedex";
 
-// Le paramètre vient de l'url, il peut valoir n'importe quoi. Retourne null
-// plutôt que NaN pour que l'écran affiche une erreur au lieu d'appeler l'api.
+// Convertit le paramètre d'URL, qui peut valoir n'importe quoi, en identifiant
+// valide ou en null pour que l'écran affiche une erreur plutôt que d'appeler
+// l'API avec une valeur absurde.
 export function parsePokemonId(param: string | string[] | undefined): number | null {
   const raw = Array.isArray(param) ? param[0] : param;
   if (raw === undefined || !/^\d+$/.test(raw)) {

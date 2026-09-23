@@ -1,3 +1,6 @@
+// Page plein écran d'une fiche Pokémon, avec artwork animé, statistiques de
+// base et navigation vers la fiche précédente ou suivante.
+
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
@@ -37,8 +40,6 @@ import { getArtworkUrl } from "@/utils/artworkUrl";
 import { formatDecimal, toKilograms, toMeters } from "@/utils/formatMeasures";
 import { formatPokemonId } from "@/utils/formatPokemonId";
 
-// Mesures du fichier Figma : bandeau de 76, cadre d'image de 144 traversé par
-// un artwork de 200 qui déborde de 56 sur la carte.
 const ARTWORK_SIZE = 200;
 const IMAGE_ROW_HEIGHT = 144;
 const CARD_PADDING_TOP = 56;
@@ -46,8 +47,6 @@ const WATERMARK_OPACITY = 0.14;
 
 type PokemonPageProps = {
   id: number | null;
-  // Page affichée : elle seule pilote la barre d'état et se montre au lecteur
-  // d'écran, ses voisines étant déjà montées pour que le balayage soit net.
   active: boolean;
   canGoPrevious: boolean;
   canGoNext: boolean;
@@ -55,6 +54,8 @@ type PokemonPageProps = {
   onBack: () => void;
 };
 
+// Charge la fiche demandée, anime l'arrivée de l'artwork et le rebond du cri,
+// et bascule entre chargement, erreur et contenu selon l'état de la requête.
 export default function PokemonPage({
   id,
   active,
@@ -70,16 +71,12 @@ export default function PokemonPage({
   const { pokemon, species, loading, error, reload } = usePokemonDetail(id);
   const { markDataReady } = useBoot();
 
-  // Une ouverture directe sur une fiche ne monte pas l'écran liste : c'est
-  // elle qui doit alors libérer l'écran de démarrage.
   useEffect(() => {
     if (!loading && active) {
       markDataReady();
     }
   }, [loading, active, markDataReady]);
 
-  // Deux mouvements qui s'additionnent : l'arrivée de l'artwork et le rebond
-  // du cri. Les séparer garde chaque valeur partagée dans un seul effet.
   const artworkLift = useSharedValue<number>(MOTION.artwork.offset);
   const artworkScale = useSharedValue<number>(0.9);
   const cryBounce = useSharedValue<number>(0);
@@ -95,9 +92,6 @@ export default function PokemonPage({
     artworkScale.value = withSpring(1, { ...MOTION.spring, reduceMotion: ReduceMotion.System });
   }, [pokemon, artworkLift, artworkScale]);
 
-  // Un bond court accompagne le cri : le geste produit un effet visible. Le
-  // compteur sert de déclencheur, le compilateur React interdisant de toucher
-  // une valeur partagée ailleurs que dans un effet.
   useEffect(() => {
     if (cryCount === 0) {
       return;
@@ -118,11 +112,7 @@ export default function PokemonPage({
     ],
   }));
 
-  // Le type du slot 1 donne la couleur de toute la fiche.
   const accent = getTypeColors(pokemon?.types[0] ?? "normal");
-  // Une teinte de type foncée ne donne que 2,49 de contraste sur la surface
-  // sombre : les titres de section passent au texte du thème, les aplats de
-  // type restent inchangés.
   const sectionColor = scheme === "dark" ? theme.textPrimary : accent.background;
 
   const hidden = !active;
@@ -255,8 +245,6 @@ export default function PokemonPage({
           />
         </Pressable>
 
-        {/* L'artwork vit dans un emplacement qui couvre la rangée : centré en
-            absolu il se collerait à gauche, et il masquerait les flèches. */}
         <View style={styles.artworkSlot} pointerEvents="none">
           <Animated.Image
             source={{ uri: getArtworkUrl(pokemon.id) }}
@@ -461,14 +449,10 @@ const styles = StyleSheet.create({
   attributeValue: {
     ...typography.measureValue,
   },
-  // Seuls les talents viennent de l'API en minuscules ; une unité SI ne prend
-  // jamais de majuscule, d'où la distinction.
   abilityValue: {
     textTransform: "capitalize",
   },
   abilities: {
-    // Pas de hauteur figée : deux talents, ou un texte agrandi par le réglage
-    // système, doivent pousser le libellé au lieu de passer dessous.
     justifyContent: "center",
   },
   attributeLabel: {

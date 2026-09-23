@@ -1,6 +1,8 @@
+// Thèmes clair et sombre, échelle typographique et dimensions du design system
+// partagés par tous les écrans.
+
 import type { TextStyle } from "react-native";
 
-// Palette claire : valeurs du Figma.
 export const lightTheme = {
   background: "#EFEFEF",
   surface: "#FFFFFF",
@@ -15,7 +17,6 @@ export const lightTheme = {
 
 export type Theme = typeof lightTheme;
 
-
 export const darkTheme: Theme = {
   background: "#121212",
   surface: "#1E1E1E",
@@ -28,7 +29,6 @@ export const darkTheme: Theme = {
   scrim: "rgba(0, 0, 0, 0.4)",
 };
 
-// Police du système : SF Pro sur iOS, Roboto sur Android.
 const WEIGHT = {
   regular: "400",
   semibold: "600",
@@ -37,8 +37,6 @@ const WEIGHT = {
 
 const TABULAR = { fontVariant: ["tabular-nums"] } satisfies TextStyle;
 
-// Échelle d'iOS, à la taille système par défaut. Le texte suit ensuite le
-// réglage du téléphone.
 export const typography = {
   appTitle: { fontSize: 28, lineHeight: 34, fontWeight: WEIGHT.bold },
   pokemonName: { fontSize: 34, lineHeight: 41, fontWeight: WEIGHT.bold },
@@ -62,10 +60,8 @@ export const iconSize = {
   xl: 32,
 } as const;
 
-// Taille minimale d'une cible tactile selon les guidelines Apple.
 export const TOUCH_TARGET = 44;
 
-// Pastille ronde des contrôles de la liste : filtre, favoris, tri.
 export const circleButton = {
   width: TOUCH_TARGET,
   height: TOUCH_TARGET,
@@ -74,7 +70,6 @@ export const circleButton = {
   justifyContent: "center",
 } as const;
 
-// Zone tactile carrée pour un bouton sans fond, comme les réglages du bandeau.
 export const touchArea = {
   minWidth: TOUCH_TARGET,
   minHeight: TOUCH_TARGET,

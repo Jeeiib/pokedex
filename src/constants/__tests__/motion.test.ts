@@ -1,3 +1,7 @@
+// Vérifie que les durées d'animation restent perceptibles, que les décalages
+// n'excèdent pas leur animation et que l'ouverture totale reste sous une
+// seconde et demie.
+
 import { MOTION } from "@/constants/motion";
 
 describe("MOTION", () => {

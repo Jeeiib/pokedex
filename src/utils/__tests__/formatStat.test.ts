@@ -1,3 +1,6 @@
+// Vérifie que la valeur d'une statistique est affichée sur trois chiffres, sans
+// troncature au-delà et sans valeur négative.
+
 import { formatStatValue } from "@/utils/formatStat";
 
 describe("formatStatValue", () => {

@@ -1,3 +1,6 @@
+// Bouton en cœur qui bascule le statut favori d'un Pokémon et l'annonce au
+// lecteur d'écran.
+
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,13 +19,14 @@ import { iconSize, touchArea } from "@/constants/theme";
 import { useFavorites } from "@/contexts/FavoritesProvider";
 import { useA11yLanguage } from "@/i18n";
 
-
 type FavoriteButtonProps = {
   id: number;
   name: string;
   color: string;
 };
 
+// Fait rebondir l'icône seulement quand le statut favori change réellement,
+// jamais lors du premier montage.
 export default function FavoriteButton({ id, name, color }: FavoriteButtonProps) {
   const { t } = useTranslation();
   const { isFavorite, toggle } = useFavorites();
@@ -31,8 +35,6 @@ export default function FavoriteButton({ id, name, color }: FavoriteButtonProps)
   const scale = useSharedValue(1);
   const mounted = useRef(false);
 
-  // Le rebond réagit à la bascule effective plutôt qu'à l'appui : la mutation
-  // vit dans un effet, pas dans le gestionnaire, et ne joue pas au montage.
   useEffect(() => {
     if (!mounted.current) {
       mounted.current = true;

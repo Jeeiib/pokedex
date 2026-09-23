@@ -1,5 +1,9 @@
+// Vérifie que les thèmes clair et sombre respectent le contraste WCAG AA et
+// partagent les mêmes clés.
+
 import { darkTheme, lightTheme } from "@/constants/theme";
 
+// Luminance relative d'une couleur, au sens du calcul de contraste WCAG.
 function luminance(hex: string) {
   const channels = [1, 3, 5]
     .map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
@@ -7,6 +11,7 @@ function luminance(hex: string) {
   return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
 }
 
+// Rapport de contraste entre deux couleurs, de 1 à 21.
 function contrast(a: string, b: string) {
   const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
   return (light + 0.05) / (dark + 0.05);
@@ -42,7 +47,6 @@ describe("darkTheme", () => {
     expect(contrast(darkTheme.textSecondary, darkTheme.surface)).toBeGreaterThanOrEqual(4.5);
   });
 
-  // Le rouge d'identité ne donne que 3,24 en texte sur fond sombre.
   it("lightens the red used as text", () => {
     expect(darkTheme.primaryText).not.toBe(lightTheme.primaryText);
     expect(contrast(darkTheme.primaryText, darkTheme.surface)).toBeGreaterThanOrEqual(4.5);

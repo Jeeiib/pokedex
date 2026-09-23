@@ -1,9 +1,12 @@
+// Liste des identifiants de Pokémon favoris et sa sérialisation.
+
+// Ajoute ou retire un identifiant de la liste des favoris selon sa présence.
 export function toggleFavorite(list: number[], id: number): number[] {
   return list.includes(id) ? list.filter((entry) => entry !== id) : [...list, id];
 }
 
-// Le contenu du stockage n'est pas fiable : une lecture ratée vaut mieux
-// qu'un plantage au démarrage.
+// Relit la liste des favoris depuis le stockage, en renvoyant une liste vide si
+// le contenu est absent ou invalide plutôt que de faire planter le démarrage.
 export function parseFavorites(raw: string | null): number[] {
   if (raw === null) {
     return [];

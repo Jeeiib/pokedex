@@ -1,3 +1,6 @@
+// Écran de démarrage animé qui reproduit le splash natif avant de s'effacer une
+// fois les données prêtes.
+
 import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import Animated, {
@@ -17,13 +20,13 @@ import { MOTION } from "@/constants/motion";
 import { lightTheme } from "@/constants/theme";
 import { useBoot } from "@/contexts/BootProvider";
 
-// Doit rester identique à l'écran natif déclaré dans app.json : même fond,
-// même largeur d'image, sinon la bascule se voit.
 const SPLASH_BACKGROUND = lightTheme.primary;
 const BALL_WIDTH = 160;
 const EXIT_SCALE = 1.15;
 const FULL_TURN = 360;
 
+// Fait tourner la pokéball en boucle pendant le chargement, puis l'agrandit et
+// l'estompe dès que les données sont disponibles.
 export default function AnimatedSplash() {
   const { dataReady } = useBoot();
   const reducedMotion = useReducedMotion();
@@ -46,7 +49,6 @@ export default function AnimatedSplash() {
       }),
       withSpring(0, { ...MOTION.spring, reduceMotion: ReduceMotion.System })
     );
-    // La rotation tourne en boucle tant que les données ne sont pas là.
     spin.value = withRepeat(
       withTiming(FULL_TURN, {
         duration: MOTION.splashSpin.duration,

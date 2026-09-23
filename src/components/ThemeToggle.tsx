@@ -1,3 +1,6 @@
+// Bouton qui fait défiler le thème de l'application entre suivre le système,
+// clair et sombre.
+
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import { AccessibilityInfo, Pressable } from "react-native";
@@ -6,9 +9,10 @@ import { iconSize, touchArea } from "@/constants/theme";
 import { useTheme, type ThemeMode } from "@/contexts/ThemeProvider";
 import { useA11yLanguage } from "@/i18n";
 
-// Trois états : suivre le téléphone, forcer le clair, forcer le sombre.
 const ORDER: ThemeMode[] = ["system", "light", "dark"];
 
+// Passe au thème suivant au clic et annonce le changement de luminosité au
+// lecteur d'écran.
 export default function ThemeToggle() {
   const { t } = useTranslation();
   const { theme, mode, scheme, setMode } = useTheme();

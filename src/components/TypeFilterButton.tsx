@@ -1,3 +1,6 @@
+// Bouton rond qui ouvre le filtre par type, avec un badge affichant le nombre
+// de types sélectionnés.
+
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -11,6 +14,7 @@ type TypeFilterButtonProps = {
   onPress: () => void;
 };
 
+// Affiche le badge de compte seulement quand au moins un type est sélectionné.
 export default function TypeFilterButton({ count, onPress }: TypeFilterButtonProps) {
   const { t } = useTranslation();
   const { theme } = useTheme();
@@ -33,8 +37,6 @@ export default function TypeFilterButton({ count, onPress }: TypeFilterButtonPro
         color={active ? theme.surface : theme.primary}
       />
       {active ? (
-        // Le badge double la couleur du bouton : un état porté par la seule
-        // teinte échappe aux daltonismes.
         <View
           style={[styles.badge, { backgroundColor: theme.surface, borderColor: theme.textPrimary }]}
           accessible={false}

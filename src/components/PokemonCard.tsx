@@ -1,3 +1,6 @@
+// Carte de la liste qui montre l'artwork et le nom d'un Pokémon, avec lien vers
+// sa fiche.
+
 import { Link } from "expo-router";
 import { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
@@ -18,13 +21,13 @@ type PokemonCardProps = {
   name: string;
 };
 
+// Anime un léger tassement au toucher et ouvre la fiche du Pokémon au
+// relâchement.
 export default function PokemonCard({ id, name }: PokemonCardProps) {
   const { theme } = useTheme();
   const a11yLanguage = useA11yLanguage();
   const [pressed, setPressed] = useState(false);
 
-  // L'animation est déclarée dans le style plutôt que poussée dans une valeur
-  // partagée : le compilateur React interdit de muter celle-ci hors d'un effet.
   const pressStyle = useAnimatedStyle(() => ({
     transform: [
       {
@@ -46,9 +49,7 @@ export default function PokemonCard({ id, name }: PokemonCardProps) {
         accessibilityLabel={`${name}, ${formatPokemonId(id)}`}
         accessibilityLanguage={a11yLanguage}
       >
-        {/* L'ombre vit sur la vue animée, au-dessus du rognage : sur iOS,
-            `overflow: hidden` rogne l'ombre du même élément et la fait
-            disparaître. */}
+
         <Animated.View
           style={[styles.surface, elevation.low, pressStyle, { backgroundColor: theme.surface }]}
         >

@@ -1,3 +1,5 @@
+// Types du domaine Pokémon, partagés par les services et les écrans.
+
 export type PokemonSummary = {
   id: number;
   slug: string;

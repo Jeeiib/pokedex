@@ -1,3 +1,6 @@
+// Initialise i18next avec les traductions de l'application et persiste la
+// langue choisie.
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getLocales } from "expo-localization";
 import i18n from "i18next";
@@ -17,8 +20,6 @@ const resources = {
 
 const deviceLanguage = getLocales()[0]?.languageCode ?? "fr";
 
-// Faux positif du plugin sur l'export par défaut d'i18next, qui porte aussi
-// un export nommé `use`.
 // eslint-disable-next-line import/no-named-as-default-member
 i18n.use(initReactI18next).init({
   resources,
@@ -27,8 +28,6 @@ i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 });
 
-// Un choix explicite prime sur la langue du téléphone, y compris après
-// redémarrage.
 AsyncStorage.getItem(STORAGE_KEY).then((stored) => {
   if (stored === "fr" || stored === "en") {
     // eslint-disable-next-line import/no-named-as-default-member -- même faux positif que le i18n.use plus haut
@@ -36,6 +35,8 @@ AsyncStorage.getItem(STORAGE_KEY).then((stored) => {
   }
 });
 
+// Change la langue active et mémorise le choix pour qu'il prime sur la langue
+// du téléphone, y compris après redémarrage.
 export async function setAppLanguage(language: AppLanguage): Promise<void> {
   // eslint-disable-next-line import/no-named-as-default-member -- même faux positif que le i18n.use plus haut
   await i18n.changeLanguage(language);

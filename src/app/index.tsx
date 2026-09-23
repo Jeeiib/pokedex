@@ -1,3 +1,6 @@
+// Écran d'accueil du Pokédex : liste des espèces avec recherche, filtre par
+// type, tri et favoris.
+
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -30,6 +33,7 @@ const SURFACE_RADIUS = 16;
 const LIST_PADDING = 12;
 const COLUMNS = 3;
 
+// Filtre, trie et distribue les espèces en grille de trois colonnes.
 export default function Index() {
   const { t } = useTranslation();
   const { theme } = useTheme();
@@ -55,15 +59,11 @@ export default function Index() {
     return sortPokemons(searchPokemons(scoped, query), sortMode);
   }, [data, favorites, favoritesOnly, ids, query, sortMode]);
 
-  // Une rangée incomplète répartirait la largeur entre ses seules cartes :
-  // 1025 n'étant pas divisible par 3, les cases manquantes sont comblées.
   const rows = useMemo(() => {
     const missing = (COLUMNS - (visible.length % COLUMNS)) % COLUMNS;
     return [...visible, ...Array.from({ length: missing }, () => null)];
   }, [visible]);
 
-  // Le nombre de résultats ne se lit que dans la liste elle-même : il doit
-  // être annoncé aux lecteurs d'écran.
   useEffect(() => {
     if (query.trim() === "") {
       return;

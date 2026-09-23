@@ -1,3 +1,6 @@
+// Vérifie la fusion des noms traduits, la recherche et le tri de la liste,
+// ainsi que le filtrage et l'intersection des identifiants.
+
 import type { PokemonSummary } from "@/types/pokemon";
 import {
   filterByIds,
@@ -26,7 +29,6 @@ describe("mergeNames", () => {
     expect(merged[1].name).toBe("Salamèche");
   });
 
-  // Une espèce absente de la table de noms doit garder son slug.
   it("keeps the slug when no translation exists", () => {
     const merged = mergeNames(index, new Map([[1, "Bulbizarre"]]));
     expect(merged[3].name).toBe("mew");
@@ -48,7 +50,6 @@ describe("mergeNames", () => {
 });
 
 describe("normalizeSearch", () => {
-  // La saisie est approximative : casse, espaces, accents.
   it("lowercases, trims and strips accents", () => {
     expect(normalizeSearch("  MEW ")).toBe("mew");
     expect(normalizeSearch("Salamèche")).toBe("salameche");

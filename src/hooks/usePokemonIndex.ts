@@ -1,3 +1,5 @@
+// Index complet des espèces, avec les noms dans la langue active.
+
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -5,8 +7,8 @@ import { getNames, getPokemonIndex } from "@/services/pokemonService";
 import type { PokemonSummary } from "@/types/pokemon";
 import { mergeNames } from "@/utils/pokemonList";
 
-// Index des 1025 espèces, noms dans la langue active. Recharge au changement
-// de langue.
+// Charge l'index des espèces et leurs noms traduits, et retombe sur les slugs
+// si la table de noms échoue.
 export function usePokemonIndex() {
   const { i18n } = useTranslation();
   const language = i18n.language;
@@ -21,16 +23,12 @@ export function usePokemonIndex() {
   }, []);
 
   useEffect(() => {
-    // Un changement de langue pendant une requête en vol laisse la précédente
-    // arriver : sans ce drapeau, elle écraserait les données les plus récentes.
     let ignore = false;
 
     async function run() {
       setError(null);
       try {
         const index = await getPokemonIndex();
-        // Seule dégradation silencieuse de l'application : si la table de noms
-        // tombe, la liste s'affiche avec les slugs plutôt que de bloquer.
         const names = await getNames(language).catch(() => new Map<number, string>());
         if (!ignore) {
           setData(mergeNames(index, names));

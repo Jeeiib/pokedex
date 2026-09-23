@@ -1,8 +1,10 @@
+// Vérifie que les appels REST et GraphQL renvoient les données attendues,
+// construisent la bonne url et échouent proprement en cas d'erreur.
+
 import { apiFetch, graphqlFetch } from "@/services/api";
 
+// Remplace fetch par une réponse contrôlée le temps d'un test.
 function mockFetch(response: Partial<Response> & { json?: () => Promise<unknown> }) {
-  // globalThis plutôt que global : le tsconfig ne charge que les types jest,
-  // pas les types node qui déclarent `global`.
   globalThis.fetch = jest.fn().mockResolvedValue(response) as unknown as typeof fetch;
 }
 

@@ -1,3 +1,6 @@
+// Icône vectorielle de pokéball du système de design, exportée du fichier
+// Figma.
+
 import Svg, { Path, type SvgProps } from "react-native-svg";
 
 type PokeballProps = SvgProps & {
@@ -5,8 +8,8 @@ type PokeballProps = SvgProps & {
   color: string;
 };
 
-// Pokéball du design system, exportée du fichier Figma. Le tracé est vectoriel
-// pour rester net à toutes les tailles.
+// Dessine la pokéball à la taille et dans la couleur demandées, nette à toute
+// résolution.
 export default function Pokeball({ size, color, ...props }: PokeballProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 23.757 24" fill="none" {...props}>

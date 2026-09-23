@@ -1,3 +1,6 @@
+// Menu qui bascule le tri de la liste entre numéro et nom, présenté dans une
+// feuille modale.
+
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -10,8 +13,6 @@ import type { SortMode } from "@/types/pokemon";
 
 const MODES: SortMode[] = ["number", "name"];
 
-// L'icône du bouton reprend celle de la maquette : le dièse pour le tri par
-// numéro, le format de texte pour le tri par nom.
 const MODE_ICONS: Record<SortMode, "tag" | "text-format"> = {
   number: "tag",
   name: "text-format",
@@ -22,6 +23,8 @@ type SortMenuProps = {
   onChange: (mode: SortMode) => void;
 };
 
+// Ouvre la feuille de tri au clic sur le bouton rond et referme la modale dès
+// qu'un mode est choisi.
 export default function SortMenu({ mode, onChange }: SortMenuProps) {
   const { t } = useTranslation();
   const { theme } = useTheme();
@@ -51,9 +54,6 @@ export default function SortMenu({ mode, onChange }: SortMenuProps) {
       </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-        {/* Le voile est un frère de la carte, jamais son parent : un Pressable
-            parent groupe tout son contenu en un seul élément et le rend
-            inatteignable au lecteur d'écran. */}
         <View style={styles.container} accessibilityViewIsModal>
           <Pressable
             style={[styles.backdrop, { backgroundColor: theme.scrim }]}

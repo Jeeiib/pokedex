@@ -1,3 +1,5 @@
+// Indicateur de chargement plein écran, centré et accessible.
+
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 
@@ -5,6 +7,8 @@ import { spacing } from "@/constants/theme";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { useA11yLanguage } from "@/i18n";
 
+// Affiche une roue de chargement dont le libellé accessible suit la langue
+// courante.
 export default function Loader() {
   const { t } = useTranslation();
   const { theme } = useTheme();

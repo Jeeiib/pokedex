@@ -1,3 +1,6 @@
+// Bandeau des filtres de type actifs, sous forme de puces amovibles suivies du
+// compte de résultats.
+
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -13,6 +16,8 @@ type ActiveTypeFiltersProps = {
   onRemove: (slug: string) => void;
 };
 
+// Retire un filtre au clic sur sa puce et s'efface entièrement quand plus aucun
+// type n'est sélectionné.
 export default function ActiveTypeFilters({
   selected,
   resultCount,

@@ -1,7 +1,9 @@
+// Vérifie que le texte de description est nettoyé des séparateurs et des
+// espaces propres au format de PokeAPI.
+
 import { cleanFlavorText } from "@/utils/cleanFlavorText";
 
 describe("cleanFlavorText", () => {
-  // Les descriptions de PokeAPI portent les séparateurs de ligne du jeu.
   it("replaces the game line breaks with spaces", () => {
     const raw = "Au matin de sa vie, la graine sur\nson dos lui fournit les éléments\ndont il a besoin pour grandir.";
     expect(cleanFlavorText(raw)).toBe(

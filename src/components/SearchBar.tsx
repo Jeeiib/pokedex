@@ -1,3 +1,5 @@
+// Barre de recherche qui filtre la liste des Pokémon par nom.
+
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, TextInput, View } from "react-native";
@@ -11,6 +13,8 @@ type SearchBarProps = {
   onChangeText: (value: string) => void;
 };
 
+// Relaie chaque frappe au parent via onChangeText pour filtrer la liste en
+// direct.
 export default function SearchBar({ value, onChangeText }: SearchBarProps) {
   const { t } = useTranslation();
   const { theme } = useTheme();

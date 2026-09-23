@@ -1,3 +1,6 @@
+// Contexte des favoris : mémorise les identifiants marqués et les persiste dans
+// le stockage local.
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
@@ -17,6 +20,7 @@ const FavoritesContext = createContext<FavoritesContextValue>({
   toggle: () => {},
 });
 
+// Charge les favoris au démarrage et les réécrit à chaque bascule.
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<number[]>([]);
 
@@ -28,7 +32,6 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
           setFavorites(parseFavorites(stored));
         }
       })
-      // Un stockage illisible laisse la liste vide, il ne casse pas l'ouverture.
       .catch(() => {});
     return () => {
       ignore = true;
@@ -54,6 +57,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// Donne accès à la liste des favoris et à leur bascule.
 export function useFavorites() {
   return useContext(FavoritesContext);
 }
