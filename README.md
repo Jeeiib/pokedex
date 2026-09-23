@@ -1,4 +1,8 @@
-# Pokédex
+<p align="center">
+  <img src="assets/images/icon.png" alt="Pokéball" width="120" />
+</p>
+
+<h1 align="center">Pokédex</h1>
 
 Application mobile React Native qui liste les 1025 espèces de Pokémon et
 affiche la fiche de chacune, à partir de l'API publique
