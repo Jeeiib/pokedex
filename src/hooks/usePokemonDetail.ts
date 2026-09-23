@@ -22,9 +22,6 @@ export function usePokemonDetail(id: number | null) {
   }, []);
 
   useEffect(() => {
-    // Garde contre les réponses obsolètes : changer de langue ou recharger
-    // pendant une requête en vol laisse la précédente arriver, et sans ce
-    // drapeau elle écraserait les données les plus récentes.
     let ignore = false;
 
     async function run() {

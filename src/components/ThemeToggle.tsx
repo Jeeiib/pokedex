@@ -24,7 +24,6 @@ export default function ThemeToggle() {
     AccessibilityInfo.announceForAccessibility(announcement);
   }
 
-  // Le mode système se distingue des deux modes forcés par une icône dédiée.
   const icon = mode === "system" ? "brightness-auto" : scheme === "dark" ? "dark-mode" : "light-mode";
 
   return (

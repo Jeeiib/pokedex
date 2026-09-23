@@ -35,8 +35,6 @@ export default function PokemonDetail() {
   const listRef = useRef<FlatList<number>>(null);
   const [currentId, setCurrentId] = useState(requestedId ?? FIRST_SPECIES);
 
-  // L'adresse suit la fiche affichée : revenir en arrière, puis rouvrir la
-  // liste, doit retrouver le Pokémon qu'on regardait.
   const show = useCallback((id: number) => {
     setCurrentId(id);
     router.setParams({ id: String(id) });
@@ -81,8 +79,6 @@ export default function PokemonDetail() {
     [currentId, goToNeighbour]
   );
 
-  // Un numéro absent de la Pokédex n'a pas de place dans la liste : la fiche
-  // seule affiche alors son erreur.
   if (requestedId === null) {
     return (
       <PokemonPage

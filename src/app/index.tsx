@@ -26,8 +26,6 @@ import { useA11yLanguage } from "@/i18n";
 import type { SortMode } from "@/types/pokemon";
 import { filterByIds, searchPokemons, sortPokemons } from "@/utils/pokemonList";
 
-// La surface descend jusqu'au bas de l'écran : ses seuls arrondis sont en
-// haut, là où le rouge du bandeau s'arrête.
 const SURFACE_RADIUS = 16;
 const LIST_PADDING = 12;
 const COLUMNS = 3;
@@ -51,8 +49,6 @@ export default function Index() {
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
 
-  // Les deux filtres se croisent : deux boutons allumés doivent tous les deux
-  // agir, sinon l'interface annonce un filtre qu'elle n'applique pas.
   const visible = useMemo(() => {
     const byType = filterByIds(data, ids);
     const scoped = favoritesOnly ? filterByIds(byType, favorites) : byType;
@@ -75,8 +71,6 @@ export default function Index() {
     AccessibilityInfo.announceForAccessibility(t("list.results", { count: visible.length }));
   }, [query, visible.length, t]);
 
-  // L'ouverture attend les données, ou la première erreur : rien ne doit rester
-  // coincé derrière l'écran de démarrage.
   useEffect(() => {
     if (!loading) {
       markDataReady();

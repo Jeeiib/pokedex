@@ -11,9 +11,6 @@ const TYPES: PokemonTypeOption[] = Object.keys(POKEMON_TYPES).map((slug) => ({ s
 
 export const MAX_TYPES = 2;
 
-// Types disponibles et identifiants du filtre combiné (jusqu'à MAX_TYPES
-// types, en ET). ids vaut null quand aucun filtre n'est actif, ce que
-// filterByIds interprète comme tout garder.
 export function useTypeFilter() {
   const [selected, setSelected] = useState<string[]>([]);
   const [ids, setIds] = useState<number[] | null>(null);
@@ -24,8 +21,8 @@ export function useTypeFilter() {
       setIds(null);
       return;
     }
-    // Même garde : passer vite d'une sélection à l'autre ne doit pas laisser
-    // la réponse la plus lente décider du filtre affiché.
+    // Passer vite d'une sélection à l'autre ne doit pas laisser la réponse la
+    // plus lente décider du filtre affiché.
     let ignore = false;
     Promise.all(selected.map((slug) => getPokemonIdsByType(slug)))
       .then((results) => {

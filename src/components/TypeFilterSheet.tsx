@@ -43,8 +43,6 @@ type TypeFilterSheetProps = {
   onClose: () => void;
 };
 
-// Feuille de sélection des types. La grille garde toute sa hauteur tant qu'elle
-// est fermée, et les 18 types y tiennent d'un seul coup d'oeil.
 export default function TypeFilterSheet({
   visible,
   types,

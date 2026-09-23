@@ -38,7 +38,6 @@ export default function AnimatedSplash() {
     if (reducedMotion) {
       return;
     }
-    // Le lancé : la Pokéball part vers le haut, retombe, rebondit.
     lift.value = withSequence(
       withTiming(-MOTION.splashThrow.lift, {
         duration: MOTION.splashThrow.duration,
@@ -63,8 +62,6 @@ export default function AnimatedSplash() {
     if (!dataReady) {
       return;
     }
-    // Le fond du départ est celui de l'écran liste : un simple fondu suffit,
-    // aucun raccord de couleur n'est possible.
     cancelAnimation(spin);
     scale.value = withTiming(EXIT_SCALE, {
       duration: MOTION.splashReveal.duration,

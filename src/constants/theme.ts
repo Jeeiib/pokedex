@@ -35,7 +35,6 @@ const WEIGHT = {
   bold: "700",
 } as const;
 
-// Un Pokédex est un instrument : ses chiffres s'alignent en colonne.
 const TABULAR = { fontVariant: ["tabular-nums"] } satisfies TextStyle;
 
 // Échelle d'iOS, à la taille système par défaut. Le texte suit ensuite le

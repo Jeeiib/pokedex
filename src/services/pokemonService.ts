@@ -16,7 +16,6 @@ function languageId(language: string): number {
   return LANGUAGE_IDS[language.split("-")[0]] ?? LANGUAGE_IDS.fr;
 }
 
-// Index de référence de la liste : identifiant et slug anglais.
 export async function getPokemonIndex(): Promise<PokemonSummary[]> {
   const payload = await apiFetch<{ results: NamedApiResource[] }>(
     `/pokemon-species?limit=${LAST_SPECIES}`
@@ -41,7 +40,6 @@ export async function getNames(language: string): Promise<Map<number, string>> {
   return new Map(payload.pokemonspeciesname.map((row) => [row.pokemon_species_id, row.name]));
 }
 
-// Détail d'un Pokémon : types, mesures, talents, statistiques, cri.
 export async function getPokemonById(id: number): Promise<Pokemon> {
   const payload = await apiFetch<{
     id: number;
@@ -93,7 +91,6 @@ export async function getPokemonSpecies(id: number, language: string): Promise<P
   };
 }
 
-// Identifiants des Pokémon d'un type, bornés aux espèces numérotées.
 // Noms traduits des talents. Ils n'existent que sur /ability, une requête par
 // talent, d'où l'appel séparé : la fiche s'affiche sans les attendre.
 export async function getAbilityNames(
@@ -116,6 +113,7 @@ export async function getAbilityNames(
   );
 }
 
+// Identifiants des Pokémon d'un type, bornés aux espèces numérotées.
 export async function getPokemonIdsByType(slug: string): Promise<number[]> {
   const payload = await apiFetch<{ pokemon: { pokemon: NamedApiResource }[] }>(`/type/${slug}`);
   return payload.pokemon

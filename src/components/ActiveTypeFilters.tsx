@@ -13,8 +13,6 @@ type ActiveTypeFiltersProps = {
   onRemove: (slug: string) => void;
 };
 
-// Rappel des types actifs. Il n'apparaît qu'une fois un filtre posé, pour que
-// son état reste lisible feuille fermée.
 export default function ActiveTypeFilters({
   selected,
   resultCount,

@@ -11,8 +11,6 @@ const STORAGE_KEY = "pokedex.themeMode";
 type ThemeContextValue = {
   theme: Theme;
   mode: ThemeMode;
-  // Schéma effectivement appliqué, réglage système résolu compris : les
-  // composants qui adaptent une couleur sans passer par un jeton le lisent.
   scheme: "light" | "dark";
   setMode: (mode: ThemeMode) => void;
 };
@@ -32,8 +30,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const systemScheme = useColorScheme();
   const [mode, setModeState] = useState<ThemeMode>("system");
 
-  // Le mode stocké est appliqué dès sa lecture. Le rendu ne l'attend pas :
-  // l'écran de démarrage couvre encore ces quelques millisecondes.
   useEffect(() => {
     let ignore = false;
     AsyncStorage.getItem(STORAGE_KEY)

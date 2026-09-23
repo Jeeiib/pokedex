@@ -11,8 +11,6 @@ type TypeFilterButtonProps = {
   onPress: () => void;
 };
 
-// Le nombre de types actifs se lit sur le bouton : feuille fermée, c'est lui
-// qui porte l'état du filtre.
 export default function TypeFilterButton({ count, onPress }: TypeFilterButtonProps) {
   const { t } = useTranslation();
   const { theme } = useTheme();

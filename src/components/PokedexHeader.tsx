@@ -23,8 +23,6 @@ const TITLE_LINE = [typography.appTitle.lineHeight, 28];
 
 type PokedexHeaderProps = {
   scrollY: SharedValue<number>;
-  // Réglages posés à droite du titre : ils ne filtrent rien et n'ont pas leur
-  // place dans la ligne des contrôles de liste.
   actions?: ReactNode;
   children?: ReactNode;
 };

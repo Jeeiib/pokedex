@@ -1,6 +1,5 @@
 import type { PokemonSummary, SortMode } from "@/types/pokemon";
 
-// Le nom traduit est un confort d'affichage : sans lui, le slug reste lisible.
 export function mergeNames(
   index: PokemonSummary[],
   names: Map<number, string>
@@ -11,7 +10,6 @@ export function mergeNames(
   }));
 }
 
-// La recherche doit tolérer la casse, les espaces et les accents.
 export function normalizeSearch(value: string): string {
   return value
     .trim()

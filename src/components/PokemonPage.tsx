@@ -85,7 +85,6 @@ export default function PokemonPage({
   const cryBounce = useSharedValue<number>(0);
   const [cryCount, setCryCount] = useState(0);
 
-  // L'artwork arrive quand les données sont là, pas au montage de l'écran.
   useEffect(() => {
     if (!pokemon) {
       return;
@@ -126,9 +125,6 @@ export default function PokemonPage({
   // type restent inchangés.
   const sectionColor = scheme === "dark" ? theme.textPrimary : accent.background;
 
-  // Les pages voisines sont montées pour que le balayage soit immédiat : elles
-  // restent hors de portée du lecteur d'écran tant qu'elles ne sont pas à
-  // l'écran.
   const hidden = !active;
 
   if (loading) {
@@ -177,14 +173,10 @@ export default function PokemonPage({
       accessibilityElementsHidden={hidden}
       importantForAccessibility={hidden ? "no-hide-descendants" : "auto"}
     >
-      {/* Le haut de l'écran est peint par la couleur du type : la barre d'état
-          suit la couleur de texte que la table du type a validée. */}
       {active ? (
         <StatusBar style={accent.foreground === "#FFFFFF" ? "light" : "dark"} />
       ) : null}
 
-      {/* Le filigrane porte le numéro de l'espèce, pas une décoration : dans
-          un Pokédex, le numéro est l'identité de la créature. */}
       <Text
         style={[styles.watermark, { color: accent.foreground }]}
         pointerEvents="none"
@@ -429,8 +421,6 @@ const styles = StyleSheet.create({
     width: ARTWORK_SIZE,
     height: ARTWORK_SIZE,
   },
-  // La carte descend jusqu'au bas de l'écran : ses seuls arrondis sont en
-  // haut, là où la couleur du type s'arrête.
   card: {
     flex: 1,
     borderTopLeftRadius: 16,

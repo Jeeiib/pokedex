@@ -55,8 +55,6 @@ const styles = StyleSheet.create({
   input: {
     ...typography.body,
     flex: 1,
-    // Le champ occupe toute la hauteur : viser la pilule suffit, sans avoir à
-    // toucher précisément la ligne de texte.
     alignSelf: "stretch",
     padding: 0,
   },

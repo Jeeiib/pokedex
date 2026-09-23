@@ -10,8 +10,6 @@ import { useA11yLanguage } from "@/i18n";
 import { getArtworkUrl } from "@/utils/artworkUrl";
 import { formatPokemonId } from "@/utils/formatPokemonId";
 
-// Le nom est ce qu'on cherche dans une grille, le numéro ne sert qu'à
-// confirmer : il passe sous le nom et s'efface.
 const CARD_HEIGHT = 148;
 const ARTWORK_SIZE = 88;
 

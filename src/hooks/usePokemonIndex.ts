@@ -16,15 +16,13 @@ export function usePokemonIndex() {
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
 
-  // Relance le chargement sans dupliquer la logique de l'effet.
   const reload = useCallback(() => {
     setAttempt((current) => current + 1);
   }, []);
 
   useEffect(() => {
-    // Garde contre les réponses obsolètes : un changement de langue ou un
-    // rechargement pendant une requête en vol laisse la précédente arriver,
-    // et sans ce drapeau elle écraserait les données les plus récentes.
+    // Un changement de langue pendant une requête en vol laisse la précédente
+    // arriver : sans ce drapeau, elle écraserait les données les plus récentes.
     let ignore = false;
 
     async function run() {
